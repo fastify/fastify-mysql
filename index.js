@@ -32,4 +32,7 @@ function fastifyMysql (fastify, options, next) {
   next()
 }
 
-module.exports = fp(fastifyMysql, '>=0.13.1')
+module.exports = fp(fastifyMysql, {
+  fastify: '>=1.0.0-rc.1',
+  name: 'fastify-mysql'
+})
