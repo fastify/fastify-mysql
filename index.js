@@ -1,7 +1,7 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const mysql = require('mysql')
+const mysql = require('mysql2/promise')
 
 function fastifyMysql (fastify, options, next) {
   const name = options.name
@@ -9,7 +9,7 @@ function fastifyMysql (fastify, options, next) {
 
   const pool = mysql.createPool(options.connectionString || options)
   const db = {
-    connect: onConnect => pool.getConnection(onConnect),
+    connect: () => pool.getConnection(),
     pool: pool,
     query: pool.query.bind(pool)
   }

@@ -27,18 +27,15 @@ fastify.register(require('fastify-mysql'), {
 })
 
 fastify.get('/user/:id', (req, reply) => {
-  fastify.mysql.connect(onConnect)
-
-  function onConnect (err, client) {
-    if (err) return reply.send(err)
-
-    client.query(
-      'SELECT id, username, hash, salt FROM users WHERE id=?', [req.params.id],
-      function onResult (err, result) {
-        client.release()
-        reply.send(err || result)
-      }
-    )
+  const connection = await fastify.mysql.connect();
+  try {
+    const result = await client.query(
+      'SELECT id, username, hash, salt FROM users WHERE id=?', [req.params.id])
+    reply.send(result)
+  } catch(err) {
+    reply.send(err)
+  } finally {
+    connection.release();
   }
 })
 
