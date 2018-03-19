@@ -10,13 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/fastify/fastify-mysql.git"
   },
-  "keywords": [
-    "fastify",
-    "mysql",
-    "database",
-    "connection",
-    "sql"
-  ],
+  "keywords": ["fastify", "mysql", "database", "connection", "sql"],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fastify/fastify-mysql/issues"
@@ -24,7 +18,7 @@
   "homepage": "https://github.com/fastify/fastify-mysql#readme",
   "dependencies": {
     "fastify-plugin": "^0.2.2",
-    "mysql": "^2.15.0"
+    "mysql2": "^1.5.2"
   },
   "devDependencies": {
     "fastify": "^1.0.0-rc.1",
