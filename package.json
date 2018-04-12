@@ -4,7 +4,7 @@
   "description": "Fastify Mysql connection plugin",
   "main": "index.js",
   "scripts": {
-    "test": "standard && tap test.js"
+    "test": "standard && tap test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   "homepage": "https://github.com/fastify/fastify-mysql#readme",
   "dependencies": {
     "fastify-plugin": "^0.2.2",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "mysql2": "^1.5.3"
   },
   "devDependencies": {
     "fastify": "^1.0.0-rc.1",

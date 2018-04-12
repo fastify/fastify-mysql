@@ -60,3 +60,6 @@ typings/
 # ctags
 tags
 
+# Lock files
+yarn.lock
+package-lock.json
