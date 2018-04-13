@@ -17,7 +17,6 @@ function fastifyMysql (fastify, options, next) {
     connect: onConnect => pool.getConnection(onConnect),
     pool: pool,
     query: pool.query.bind(pool),
-    end: pool.end.bind(pool),
     getConnection: pool.getConnection.bind(pool),
 
     // synchronous functions
