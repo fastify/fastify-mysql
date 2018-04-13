@@ -20,9 +20,9 @@ function fastifyMysql (fastify, options, next) {
     getConnection: pool.getConnection.bind(pool),
 
     // synchronous functions
-    format: mysql.format || pool.format,
-    escape: mysql.escape || pool.escape,
-    escapeId: mysql.escapeId || pool.escapeId
+    format: pool.format.bind(pool),
+    escape: pool.escape.bind(pool),
+    escapeId: pool.escapeId.bind(pool)
   }
 
   if (name) {
@@ -31,25 +31,27 @@ function fastifyMysql (fastify, options, next) {
     }
     if (fastify.mysql[name]) {
       next(new Error('fastify.mysql.' + name + 'has already registered'))
+      return
     }
     fastify.mysql[name] = db
   } else {
     if (fastify.mysql) {
       next(new Error('fastify-mysql has already registered'))
+      return
     } else {
       fastify.mysql = db
     }
   }
 
-  fastify.addHook('onClose', (fastify, done) => {
-    fastify.mysql = null
-    return pool.end(done)
-  })
+  fastify.addHook('onClose', (fastify, done) => pool.end(done))
 
-  next()
+  if (usePromise) {
+    pool.query('SELECT 1')
+      .then(() => next())
+      .catch((err) => next(err))
+  } else {
+    pool.query('SELECT 1', (err) => next(err))
+  }
 }
 
-module.exports = fp(fastifyMysql, {
-  fastify: '>=1.0.0',
-  name: 'fastify-mysql'
-})
+module.exports = fp(fastifyMysql)

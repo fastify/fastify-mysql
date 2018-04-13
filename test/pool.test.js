@@ -106,7 +106,7 @@ test('fastify.mysql.test namespace should exist', t => {
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     name: 'test',
-    connectionString: 'mysql://mysql@localhost/mysql'
+    connectionString: 'mysql://root@localhost/mysql'
   })
 
   fastify.ready(err => {
