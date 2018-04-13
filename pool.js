@@ -12,17 +12,26 @@ function fastifyMysql (fastify, options, next) {
   const mysql = usePromise ? require('mysql2/promise') : require('mysql2')
 
   const pool = mysql.createPool(options.connectionString || options)
+
   const db = {
     connect: onConnect => pool.getConnection(onConnect),
     pool: pool,
     query: pool.query.bind(pool),
     end: pool.end.bind(pool),
-    getConnection: pool.getConnection.bind(pool)
+    getConnection: pool.getConnection.bind(pool),
+
+    // synchronous functions
+    format: mysql.format || pool.format,
+    escape: mysql.escape || pool.escape,
+    escapeId: mysql.escapeId || pool.escapeId
   }
 
   if (name) {
     if (!fastify.mysql) {
       fastify.decorate('mysql', {})
+    }
+    if (fastify.mysql[name]) {
+      next(new Error('fastify.mysql.' + name + 'has already registered'))
     }
     fastify.mysql[name] = db
   } else {
@@ -33,21 +42,15 @@ function fastifyMysql (fastify, options, next) {
     }
   }
 
-  if (usePromise) {
-    fastify.addHook('onClose', async (fastify, done) => {
-      fastify.mysql = null
-      await pool.end()
-    })
-  } else {
-    fastify.addHook('onClose', (fastify, done) => {
-      fastify.mysql = null
-      pool.end(done)
-    })
-  }
+  fastify.addHook('onClose', (fastify, done) => {
+    fastify.mysql = null
+    return pool.end(done)
+  })
+
   next()
 }
 
 module.exports = fp(fastifyMysql, {
-  fastify: '>=0.13.1',
+  fastify: '>=1.0.0',
   name: 'fastify-mysql'
 })

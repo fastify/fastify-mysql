@@ -6,7 +6,7 @@ const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
 test('fastify.mysql namespace should exist', t => {
-  t.plan(6)
+  t.plan(9)
 
   const fastify = Fastify()
 
@@ -21,6 +21,9 @@ test('fastify.mysql namespace should exist', t => {
     t.ok(fastify.mysql.pool)
     t.ok(fastify.mysql.end)
     t.ok(fastify.mysql.getConnection)
+    t.ok(fastify.mysql.format)
+    t.ok(fastify.mysql.escape)
+    t.ok(fastify.mysql.escapeId)
     fastify.close()
   })
 })
@@ -121,7 +124,7 @@ test('test pool.end util', (t) => {
 })
 
 test('fastify.mysql.test namespace should exist', t => {
-  t.plan(7)
+  t.plan(10)
 
   const fastify = Fastify()
 
@@ -138,46 +141,44 @@ test('fastify.mysql.test namespace should exist', t => {
     t.ok(fastify.mysql.test.pool)
     t.ok(fastify.mysql.test.end)
     t.ok(fastify.mysql.test.getConnection)
+    t.ok(fastify.mysql.test.format)
+    t.ok(fastify.mysql.test.escape)
+    t.ok(fastify.mysql.test.escapeId)
     fastify.close()
   })
 })
 
-test('promise pool', (t) => {
-  t.plan(15)
+test('synchronous functions', (t) => {
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
-    promise: true,
     host: 'localhost',
     user: 'root',
-    database: 'mysql',
-    connectionLimit: 1
+    database: 'mysql'
   })
 
-  fastify.ready(async (err) => {
+  fastify.ready((err) => {
     t.error(err)
-    t.ok(fastify.mysql)
-    t.ok(fastify.mysql.connect)
-    t.ok(fastify.mysql.pool)
-    t.ok(fastify.mysql.end)
-    t.ok(fastify.mysql.getConnection)
+    test('mysql.format', (t) => {
+      const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
+      t.is('SELECT 1 AS `now`', sqlString)
+      t.end()
+    })
 
-    const [results1, fields1] = await fastify.mysql.query('SELECT 1 AS `ping`')
-    t.ok(results1[0].ping === 1)
-    t.ok(fields1)
-    const connection = await fastify.mysql.getConnection()
-    t.ok(connection)
-    const [results2, fields2] = await connection.query('SELECT 2 AS `ping`')
-    t.ok(results2[0].ping === 2)
-    t.ok(fields2)
+    test('mysql.escape', (t) => {
+      const id = 'userId'
+      const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
+      t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      t.end()
+    })
 
-    await connection.release()
-    const [results3, fields3] = await fastify.mysql.query('SELECT 3 AS `ping`')
-    t.ok(results3[0].ping === 3)
-    t.ok(fields3)
+    test('mysql.escapeId', (t) => {
+      const sorter = 'date'
+      const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
+      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      t.end()
+    })
 
-    const error = await fastify.mysql.end()
-    t.error(error)
-    t.ok(fastify.mysql.pool.pool._closed)
     fastify.close()
+    t.end()
   })
 })
