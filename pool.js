@@ -43,13 +43,11 @@ function fastifyMysql (fastify, options, next) {
     }
   }
 
-  fastify.addHook('onClose', (fastify, done) => pool.end(done))
-
   if (usePromise) {
-    pool.query('SELECT 1')
-      .then(() => next())
-      .catch((err) => next(err))
+    fastify.addHook('onClose', (fastify, done) => pool.end())
+    return pool.query('SELECT 1')
   } else {
+    fastify.addHook('onClose', (fastify, done) => pool.end(done))
     pool.query('SELECT 1', (err) => next(err))
   }
 }
