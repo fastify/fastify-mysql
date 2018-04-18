@@ -33,7 +33,7 @@ function fastifyMysql (fastify, options, next) {
     }
 
     if (usePromise) {
-      fastify.addHook('onClose', (fastify, done) => client.end())
+      fastify.addHook('onClose', (fastify) => client.end())
     } else {
       fastify.addHook('onClose', (fastify, done) => client.end(done))
     }

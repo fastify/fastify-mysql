@@ -13,7 +13,6 @@ npm i fastify-mysql --save
 Add it to you project with `register` and you are done!
 This plugin will add the `mysql` namespace in your Fastify instance, with the following properties:
 ```
-connect: the function to get a connection from the pool
 pool: the pool instance
 query: an utility to perform a query without a transaction
 getConnection: get a connection from the pool
@@ -31,7 +30,7 @@ fastify.register(require('fastify-mysql'), {
 })
 
 fastify.get('/user/:id', (req, reply) => {
-  fastify.mysql.connect(onConnect)
+  fastify.mysql.getConnection(onConnect)
 
   function onConnect (err, client) {
     if (err) return reply.send(err)
