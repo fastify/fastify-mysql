@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "standard && tap test/*.test.js",
-    "docker": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql"
+    "mysql": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql"
   },
   "repository": {
     "type": "git",
