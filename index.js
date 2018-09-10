@@ -46,6 +46,19 @@ module.exports = fp(fastifyMysql, {
   name: 'fastify-mysql'
 })
 
+function _exportClientMethods (client, exports) {
+  for (const method of [
+    'ping',
+    'query',
+    'execute',
+    'beginTransaction',
+    'commit',
+    'rollback'
+  ]) {
+    exports[method] = client[method].bind(client)
+  }
+}
+
 function _createConnection (options, cb) {
   const usePromise = options.promise
   delete options.promise
@@ -66,13 +79,13 @@ function _createConnection (options, cb) {
   if (connectionType !== 'connection') {
     client = mysql.createPool(options.connectionString || options)
     db.pool = client
-    db.query = client.query.bind(client)
     db.getConnection = client.getConnection.bind(client)
+    _exportClientMethods(client, db)
   } else {
     client = mysql.createConnection(options.connectionString || options)
     if (!usePromise) {
       db.connection = client
-      db.query = client.query.bind(client)
+      _exportClientMethods(client, db)
     }
   }
 
@@ -84,7 +97,7 @@ function _createConnection (options, cb) {
     } else {
       client.then((connection) => {
         db.connection = connection
-        db.query = connection.query.bind(connection)
+        _exportClientMethods(connection, db)
 
         connection.query('SELECT NOW()')
           .then(() => cb(null, db))
