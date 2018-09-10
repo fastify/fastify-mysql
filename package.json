@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "description": "Fastify Mysql connection plugin",
   "main": "index.js",
+  "engines": {
+    "node": ">= 6.0"
+  },
   "scripts": {
     "test": "standard && tap test/*.test.js",
     "mysql": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql"
