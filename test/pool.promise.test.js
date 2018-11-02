@@ -13,7 +13,11 @@ test('promise pool', (t) => {
       host: 'localhost',
       user: 'root',
       database: 'mysql',
-      connectionLimit: 1
+      connectionLimit: 5,
+
+      // Compatibility option, causes Promise to return an array object, [rows, metadata].
+      // rather than the rows as JSON objects with a meta property.
+      metaAsArray: true
     })
     done()
   })
@@ -28,9 +32,9 @@ test('promise pool', (t) => {
     fastify.ready((err) => {
       t.error(err)
       fastify.mysql.query('SELECT 1 AS `ping`')
-        .then(([results, fields]) => {
+        .then(([results, metadata]) => {
           t.ok(results[0].ping === 1)
-          t.ok(fields)
+          t.ok(metadata)
           t.end()
         })
     })
@@ -42,16 +46,14 @@ test('promise pool', (t) => {
       fastify.mysql.getConnection()
         .then((connection) => {
           connection.query('SELECT 2 AS `ping`')
-            .then(([results, fields]) => {
+            .then(([results]) => {
               t.ok(results[0].ping === 2)
-              t.ok(fields)
               connection.release()
             })
         })
       fastify.mysql.query('SELECT 3 AS `ping`')
-        .then(([results, fields]) => {
+        .then(([results]) => {
           t.ok(results[0].ping === 3)
-          t.ok(fields)
           t.end()
         })
     })

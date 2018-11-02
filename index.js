@@ -53,13 +53,13 @@ function _createConnection (options, cb) {
   const connectionType = options.type
   delete options.type
 
-  const { format, escape, escapeId } = require('mysql2')
-  const mysql = usePromise ? require('mysql2/promise') : require('mysql2')
+  const sqlstring = require('sqlstring')
+  const mysql = usePromise ? require('mariadb/promise') : require('mariadb/callback')
 
   const db = {
-    format: format,
-    escape: escape,
-    escapeId: escapeId
+    format: sqlstring.format,
+    escape: sqlstring.escape,
+    escapeId: sqlstring.escapeId
   }
 
   let client = {}

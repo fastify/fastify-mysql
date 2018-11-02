@@ -112,7 +112,7 @@ test('promise connection', (t) => {
     fastify.ready((err) => {
       t.error(err)
       fastify.mysql.query('SELECT 1 AS `ping`')
-        .then(([results]) => {
+        .then((results) => {
           t.error(err)
           t.ok(results[0].ping === 1)
           t.end()

@@ -25,7 +25,8 @@
   "homepage": "https://github.com/fastify/fastify-mysql#readme",
   "dependencies": {
     "fastify-plugin": "^1.2.0",
-    "mysql2": "^1.5.3"
+    "mariadb": "^2.0.0-alpha",
+    "sqlstring": "^2.3.1"
   },
   "devDependencies": {
     "fastify": "^1.0.0",
