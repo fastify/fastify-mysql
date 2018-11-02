@@ -10,7 +10,9 @@ test('fastify.mysql namespace should exist', t => {
 
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
-    connectionString: 'mysql://root@localhost/mysql'
+    host: 'localhost',
+    user: 'root',
+    database: 'mysql'
   })
 
   fastify.ready(err => {
@@ -29,7 +31,9 @@ test('use query util', t => {
 
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
-    connectionString: 'mysql://root@localhost/mysql'
+    host: 'localhost',
+    user: 'root',
+    database: 'mysql'
   })
 
   fastify.ready(err => {
@@ -79,7 +83,9 @@ test('fastify.mysql.test namespace should exist', t => {
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     name: 'test',
-    connectionString: 'mysql://root@localhost/mysql'
+    host: 'localhost',
+    user: 'root',
+    database: 'mysql'
   })
 
   fastify.ready(err => {
@@ -105,7 +111,7 @@ test('synchronous functions', (t) => {
     t.error(err)
     test('mysql.sqlstring.format', (t) => {
       const sql = fastify.mysql.sqlstring.format('SELECT ? AS `now`', [1])
-      t.is('SELECT 1 AS `now`', sql)
+      t.is(sql, 'SELECT 1 AS `now`')
       t.end()
     })
 
@@ -119,7 +125,7 @@ test('synchronous functions', (t) => {
     test('mysql.sqlstring.escapeId', (t) => {
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.sqlstring.escapeId('posts.' + sorter)
-      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      t.is(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
       t.end()
     })
 
