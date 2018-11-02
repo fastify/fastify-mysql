@@ -18,9 +18,11 @@ function fastifyMysql (fastify, options, next) {
     query: pool.query.bind(pool),
     getConnection: pool.getConnection.bind(pool),
 
-    format,
-    escape,
-    escapeId
+    sqlstring: {
+      format,
+      escape,
+      escapeId
+    }
   }
 
   if (name) {

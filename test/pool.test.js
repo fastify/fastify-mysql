@@ -6,7 +6,7 @@ const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
 test('fastify.mysql namespace should exist', t => {
-  t.plan(8)
+  t.plan(6)
 
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
@@ -19,10 +19,7 @@ test('fastify.mysql namespace should exist', t => {
     t.ok(fastify.mysql.pool)
     t.ok(fastify.mysql.query)
     t.ok(fastify.mysql.getConnection)
-
-    t.ok(fastify.mysql.format)
-    t.ok(fastify.mysql.escape)
-    t.ok(fastify.mysql.escapeId)
+    t.ok(fastify.mysql.sqlstring)
     fastify.close()
   })
 })
@@ -77,7 +74,7 @@ test('use getConnection util', t => {
 })
 
 test('fastify.mysql.test namespace should exist', t => {
-  t.plan(8)
+  t.plan(6)
 
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
@@ -91,9 +88,7 @@ test('fastify.mysql.test namespace should exist', t => {
     t.ok(fastify.mysql.test)
     t.ok(fastify.mysql.test.pool)
     t.ok(fastify.mysql.test.getConnection)
-    t.ok(fastify.mysql.test.format)
-    t.ok(fastify.mysql.test.escape)
-    t.ok(fastify.mysql.test.escapeId)
+    t.ok(fastify.mysql.test.sqlstring)
     fastify.close()
   })
 })
@@ -108,22 +103,22 @@ test('synchronous functions', (t) => {
 
   fastify.ready((err) => {
     t.error(err)
-    test('mysql.format', (t) => {
-      const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.is('SELECT 1 AS `now`', sqlString)
+    test('mysql.sqlstring.format', (t) => {
+      const sql = fastify.mysql.sqlstring.format('SELECT ? AS `now`', [1])
+      t.is('SELECT 1 AS `now`', sql)
       t.end()
     })
 
-    test('mysql.escape', (t) => {
+    test('mysql.sqlstring.escape', (t) => {
       const id = 'userId'
-      const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
+      const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.sqlstring.escape(id)
       t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
       t.end()
     })
 
-    test('mysql.escapeId', (t) => {
+    test('mysql.sqlstring.escapeId', (t) => {
       const sorter = 'date'
-      const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
+      const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.sqlstring.escapeId('posts.' + sorter)
       t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
       t.end()
     })
