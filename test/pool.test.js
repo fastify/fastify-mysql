@@ -19,6 +19,7 @@ test('fastify.mysql namespace should exist', t => {
     t.ok(fastify.mysql.pool)
     t.ok(fastify.mysql.query)
     t.ok(fastify.mysql.getConnection)
+
     t.ok(fastify.mysql.format)
     t.ok(fastify.mysql.escape)
     t.ok(fastify.mysql.escapeId)
