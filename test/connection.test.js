@@ -30,6 +30,60 @@ test('fastify.mysql namespace should exist', (t) => {
   })
 })
 
+test('Should throw on multiple register', (t) => {
+  t.plan(1)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  fastify
+    .register(fastifyMysql, {
+      type: 'connection',
+      host: 'localhost',
+      user: 'root',
+      database: 'mysql'
+    })
+    .register(fastifyMysql, {
+      type: 'connection',
+      host: 'localhost',
+      user: 'root',
+      database: 'mysql'
+    })
+
+  fastify.ready((err) => {
+    t.is(err.message, 'fastify-mysql has already been registered')
+  })
+})
+
+test('Should throw with duplicate connection namespace', (t) => {
+  t.plan(1)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  const name = 'test'
+
+  fastify
+    .register(fastifyMysql, {
+      name,
+      type: 'connection',
+      host: 'localhost',
+      user: 'root',
+      database: 'mysql'
+    })
+    .register(fastifyMysql, {
+      name,
+      type: 'connection',
+      host: 'localhost',
+      user: 'root',
+      database: 'mysql'
+    })
+
+  fastify.ready((err) => {
+    t.is(err.message, `fastify-mysql '${name}' instance name has already been registered`)
+  })
+})
+
 test('utils should work', (t) => {
   let fastify = null
   t.beforeEach((done) => {
@@ -111,12 +165,11 @@ test('promise connection', (t) => {
   t.test('query util', (t) => {
     fastify.ready((err) => {
       t.error(err)
-      fastify.mysql.query('SELECT 1 AS `ping`')
-        .then(([results]) => {
-          t.error(err)
-          t.ok(results[0].ping === 1)
-          t.end()
-        })
+      fastify.mysql.query('SELECT 1 AS `ping`').then(([results]) => {
+        t.error(err)
+        t.ok(results[0].ping === 1)
+        t.end()
+      })
     })
   })
 

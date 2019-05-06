@@ -12,21 +12,21 @@ function fastifyMysql (fastify, options, next) {
   _createConnection(options, (err, db) => {
     if (err) return next(err)
 
-    const client = (connectionType !== 'connection') ? db.pool : db.connection
+    const client = connectionType !== 'connection' ? db.pool : db.connection
 
     if (name) {
       if (!fastify.mysql) {
         fastify.decorate('mysql', {})
       }
+
       if (fastify.mysql[name]) {
-        next(new Error('fastify.mysql.' + name + 'has already registered'))
-        return
+        next(new Error(`fastify-mysql '${name}' instance name has already been registered`))
       }
+
       fastify.mysql[name] = db
     } else {
       if (fastify.mysql) {
-        next(new Error('fastify-mysql has already registered'))
-        return
+        next(new Error('fastify-mysql has already been registered'))
       } else {
         fastify.mysql = db
       }
@@ -37,6 +37,7 @@ function fastifyMysql (fastify, options, next) {
     } else {
       fastify.addHook('onClose', (fastify, done) => client.end(done))
     }
+
     next()
   })
 }
@@ -63,13 +64,16 @@ function _createConnection (options, cb) {
   }
 
   let client = {}
+
   if (connectionType !== 'connection') {
     client = mysql.createPool(options.connectionString || options)
+
     db.pool = client
     db.query = client.query.bind(client)
     db.getConnection = client.getConnection.bind(client)
   } else {
     client = mysql.createConnection(options.connectionString || options)
+
     if (!usePromise) {
       db.connection = client
       db.query = client.query.bind(client)
@@ -78,7 +82,8 @@ function _createConnection (options, cb) {
 
   if (usePromise) {
     if (connectionType !== 'connection') {
-      client.query('SELECT NOW()')
+      client
+        .query('SELECT NOW()')
         .then(() => cb(null, db))
         .catch((err) => cb(err, null))
     } else {
@@ -86,7 +91,8 @@ function _createConnection (options, cb) {
         db.connection = connection
         db.query = connection.query.bind(connection)
 
-        connection.query('SELECT NOW()')
+        connection
+          .query('SELECT NOW()')
           .then(() => cb(null, db))
           .catch((err) => cb(err, null))
       })

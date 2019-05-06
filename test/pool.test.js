@@ -5,7 +5,7 @@ const test = t.test
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
-test('fastify.mysql namespace should exist', t => {
+test('fastify.mysql namespace should exist', (t) => {
   t.plan(8)
 
   const fastify = Fastify()
@@ -13,7 +13,7 @@ test('fastify.mysql namespace should exist', t => {
     connectionString: 'mysql://root@localhost/mysql'
   })
 
-  fastify.ready(err => {
+  fastify.ready((err) => {
     t.error(err)
     t.ok(fastify.mysql)
     t.ok(fastify.mysql.pool)
@@ -26,7 +26,49 @@ test('fastify.mysql namespace should exist', t => {
   })
 })
 
-test('use query util', t => {
+test('Should throw on multiple register', (t) => {
+  t.plan(1)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  fastify
+    .register(fastifyMysql, {
+      connectionString: 'mysql://root@localhost/mysql'
+    })
+    .register(fastifyMysql, {
+      connectionString: 'mysql://root@localhost/mysql'
+    })
+
+  fastify.ready((err) => {
+    t.is(err.message, 'fastify-mysql has already been registered')
+  })
+})
+
+test('Should throw with duplicate connection namespace', (t) => {
+  t.plan(1)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  const name = 'test'
+
+  fastify
+    .register(fastifyMysql, {
+      name,
+      connectionString: 'mysql://root@localhost/mysql'
+    })
+    .register(fastifyMysql, {
+      name,
+      connectionString: 'mysql://root@localhost/mysql'
+    })
+
+  fastify.ready((err) => {
+    t.is(err.message, `fastify-mysql '${name}' instance name has already been registered`)
+  })
+})
+
+test('use query util', (t) => {
   t.plan(3)
 
   const fastify = Fastify()
@@ -34,7 +76,7 @@ test('use query util', t => {
     connectionString: 'mysql://root@localhost/mysql'
   })
 
-  fastify.ready(err => {
+  fastify.ready((err) => {
     t.error(err)
     fastify.mysql.query('SELECT NOW()', (err, result) => {
       t.error(err)
@@ -44,7 +86,7 @@ test('use query util', t => {
   })
 })
 
-test('use getConnection util', t => {
+test('use getConnection util', (t) => {
   t.plan(7)
 
   const fastify = Fastify()
@@ -75,7 +117,7 @@ test('use getConnection util', t => {
   })
 })
 
-test('fastify.mysql.test namespace should exist', t => {
+test('fastify.mysql.test namespace should exist', (t) => {
   t.plan(8)
 
   const fastify = Fastify()
@@ -84,7 +126,7 @@ test('fastify.mysql.test namespace should exist', t => {
     connectionString: 'mysql://root@localhost/mysql'
   })
 
-  fastify.ready(err => {
+  fastify.ready((err) => {
     t.error(err)
     t.ok(fastify.mysql)
     t.ok(fastify.mysql.test)

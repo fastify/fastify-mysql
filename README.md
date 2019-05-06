@@ -5,6 +5,11 @@
 Fastify MySQL connection plugin, with this you can share the same MySQL connection pool in every part of your server.
 Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used, the options that you pass to `register` will be passed to the MySQL pool builder.
 
+**Disclaimer:**
+This plugin is compatible with `MySQL 5.5.x`, `MySQL 5.7.x` and `MariaDB` databases.
+
+**`MySQL 8.x` databases are not compatible !**
+
 ## Install
 ```
 npm i fastify-mysql --save
