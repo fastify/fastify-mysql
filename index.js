@@ -20,13 +20,13 @@ function fastifyMysql (fastify, options, next) {
       }
 
       if (fastify.mysql[name]) {
-        next(new Error(`fastify-mysql '${name}' instance name has already been registered`))
+        return next(new Error(`fastify-mysql '${name}' instance name has already been registered`))
       }
 
       fastify.mysql[name] = db
     } else {
       if (fastify.mysql) {
-        next(new Error('fastify-mysql has already been registered'))
+        return next(new Error('fastify-mysql has already been registered'))
       } else {
         fastify.mysql = db
       }
