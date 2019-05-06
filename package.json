@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "standard && tap test/*.test.js",
+    "mariadb": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mariadb",
     "mysql": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.5",
     "mysql:5.7": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.7"
   },
