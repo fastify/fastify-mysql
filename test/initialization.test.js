@@ -101,3 +101,24 @@ test('Should throw when mysql2 fail', (t) => {
     fastify.close()
   })
 })
+
+test('Promise: Should throw when mysql2 fail', (t) => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  const BAD_PORT = 6000
+  const HOST = '127.0.0.1'
+
+  // We try to access throught a wrong port (MySQL listen on port 3306)
+  fastify.register(fastifyMysql, {
+    host: HOST,
+    port: BAD_PORT,
+    promise: true
+  })
+
+  fastify.ready((errors) => {
+    t.ok(errors)
+    t.is(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    fastify.close()
+  })
+})
