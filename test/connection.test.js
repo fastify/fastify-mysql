@@ -56,6 +56,7 @@ test('utils should work', (t) => {
       fastify.mysql.query('SELECT 1 AS `ping`', (err, results) => {
         t.error(err)
         t.ok(results[0].ping === 1)
+
         fastify.close()
         t.end()
       })
@@ -122,6 +123,7 @@ test('promise connection', (t) => {
       fastify.mysql.query('SELECT 1 AS `ping`')
         .then(([results]) => {
           t.error(err)
+
           t.ok(results[0].ping === 1)
           t.end()
         })

@@ -9,6 +9,7 @@ test('Should not throw if registered within different scopes (with and without n
   t.plan(2)
 
   const fastify = Fastify()
+  t.teardown(() => fastify.close())
 
   fastify.register(function scopeOne (instance, opts, next) {
     instance.register(fastifyMysql, {
@@ -35,7 +36,6 @@ test('Should not throw if registered within different scopes (with and without n
   fastify.ready((errors) => {
     t.error(errors)
     t.is(errors, null)
-    fastify.close()
   })
 })
 
@@ -43,6 +43,7 @@ test('Should throw when trying to register multiple instances without giving a n
   t.plan(2)
 
   const fastify = Fastify()
+  t.teardown(() => fastify.close())
 
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
@@ -55,14 +56,14 @@ test('Should throw when trying to register multiple instances without giving a n
   fastify.ready((errors) => {
     t.ok(errors)
     t.is(errors.message, 'fastify-mysql has already been registered')
-    fastify.close()
   })
 })
 
 test('Should throw with duplicate connection names', (t) => {
-  t.plan(1)
+  t.plan(2)
 
   const fastify = Fastify()
+  t.teardown(() => fastify.close())
   const name = 'test'
 
   fastify
@@ -76,7 +77,7 @@ test('Should throw with duplicate connection names', (t) => {
     })
 
   fastify.ready((errors) => {
+    t.ok(errors)
     t.is(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
-    fastify.close()
   })
 })

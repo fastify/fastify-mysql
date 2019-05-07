@@ -3,16 +3,25 @@
 const fp = require('fastify-plugin')
 
 function fastifyMysql (fastify, options, next) {
+  const connectionType = options.type
+  delete options.type
   const name = options.name
   delete options.name
-
-  const connectionType = options.type
   const usePromise = options.promise
+  delete options.promise
 
-  _createConnection(options, (err, db) => {
-    if (err) return next(err)
+  _createConnection({ connectionType, options, usePromise }, (err, db) => {
+    if (err) {
+      return next(err)
+    }
 
     const client = connectionType !== 'connection' ? db.pool : db.connection
+
+    if (usePromise) {
+      fastify.addHook('onClose', (fastify) => client.end())
+    } else {
+      fastify.addHook('onClose', (fastify, done) => client.end(done))
+    }
 
     if (name) {
       if (!fastify.mysql) {
@@ -32,12 +41,6 @@ function fastifyMysql (fastify, options, next) {
       }
     }
 
-    if (usePromise) {
-      fastify.addHook('onClose', (fastify) => client.end())
-    } else {
-      fastify.addHook('onClose', (fastify, done) => client.end(done))
-    }
-
     next()
   })
 }
@@ -47,13 +50,7 @@ module.exports = fp(fastifyMysql, {
   name: 'fastify-mysql'
 })
 
-function _createConnection (options, cb) {
-  const usePromise = options.promise
-  delete options.promise
-
-  const connectionType = options.type
-  delete options.type
-
+function _createConnection ({ connectionType, options, usePromise }, cb) {
   const { format, escape, escapeId } = require('mysql2')
   const mysql = usePromise ? require('mysql2/promise') : require('mysql2')
 
@@ -66,38 +63,44 @@ function _createConnection (options, cb) {
   let client = {}
 
   if (connectionType !== 'connection') {
+    // Pool relative code
     client = mysql.createPool(options.connectionString || options)
 
     db.pool = client
     db.query = client.query.bind(client)
     db.getConnection = client.getConnection.bind(client)
+
+    if (!usePromise) {
+      client.query('SELECT NOW()', (err) => cb(err, db))
+    } else {
+      client
+        .query('SELECT NOW()')
+        .then(() => cb(null, db))
+        .catch((err) => cb(err, null))
+    }
   } else {
+    // Connection relative code
     client = mysql.createConnection(options.connectionString || options)
 
     if (!usePromise) {
       db.connection = client
       db.query = client.query.bind(client)
-    }
-  }
 
-  if (usePromise) {
-    if (connectionType !== 'connection') {
-      client
-        .query('SELECT NOW()')
-        .then(() => cb(null, db))
-        .catch((err) => cb(err, null))
+      client.query('SELECT NOW()', (err) => cb(err, db))
     } else {
-      client.then((connection) => {
-        db.connection = connection
-        db.query = connection.query.bind(connection)
+      client
+        .then((connection) => {
+          db.connection = connection
+          db.query = connection.query.bind(connection)
 
-        connection
-          .query('SELECT NOW()')
-          .then(() => cb(null, db))
-          .catch((err) => cb(err, null))
-      })
+          connection
+            .query('SELECT NOW()')
+            .then(() => cb(null, db))
+            .catch((err) => cb(err, null))
+        })
+        .catch((err) => {
+          return cb(err, null)
+        })
     }
-  } else {
-    client.query('SELECT NOW()', (err) => cb(err, db))
   }
 }
