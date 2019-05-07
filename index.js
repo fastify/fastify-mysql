@@ -98,9 +98,7 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
             .then(() => cb(null, db))
             .catch((err) => cb(err, null))
         })
-        .catch((err) => {
-          return cb(err, null)
-        })
+        .catch((err) => cb(err, null))
     }
   }
 }
