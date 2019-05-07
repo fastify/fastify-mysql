@@ -37,7 +37,7 @@ function fastifyMysql (fastify, options, next) {
       if (fastify.mysql) {
         return next(new Error('fastify-mysql has already been registered'))
       } else {
-        fastify.mysql = db
+        fastify.decorate('mysql', db)
       }
     }
 
