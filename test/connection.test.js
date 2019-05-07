@@ -120,13 +120,12 @@ test('promise connection', (t) => {
     fastify.ready((err) => {
       t.error(err)
 
-      fastify.mysql.query('SELECT 1 AS `ping`')
-        .then(([results]) => {
-          t.error(err)
+      fastify.mysql.query('SELECT 1 AS `ping`').then(([results]) => {
+        t.error(err)
 
-          t.ok(results[0].ping === 1)
-          t.end()
-        })
+        t.ok(results[0].ping === 1)
+        t.end()
+      })
     })
   })
 
@@ -162,5 +161,43 @@ test('promise connection', (t) => {
     })
   })
 
+  t.test('Should throw when mysql2 fail to perform operation', (t) => {
+    fastify.ready((err) => {
+      t.error(err)
+
+      const sorter = 'date'
+      const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
+      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      t.end()
+    })
+  })
+
   t.end()
+})
+
+test('Promise: should throw when mysql2 fail to perform operation', (t) => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  fastify.register(fastifyMysql, {
+    type: 'connection',
+    name: 'test',
+    host: 'localhost',
+    user: 'root',
+    database: 'mysql',
+    promise: true
+  })
+
+  fastify.ready((err) => {
+    t.error(err)
+
+    const sql = 'SELECT fastify FROM fastify'
+
+    fastify.mysql.test.connection.query(sql).catch((errors) => {
+      t.ok(errors)
+      t.is(errors.message, `Table 'mysql.fastify' doesn't exist`)
+    })
+  })
 })

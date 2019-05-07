@@ -17,11 +17,7 @@ function fastifyMysql (fastify, options, next) {
 
     const client = connectionType !== 'connection' ? db.pool : db.connection
 
-    if (usePromise) {
-      fastify.addHook('onClose', (fastify) => client.end())
-    } else {
-      fastify.addHook('onClose', (fastify, done) => client.end(done))
-    }
+    fastify.addHook('onClose', (fastify, done) => client.end(done))
 
     if (name) {
       if (!fastify.mysql) {
@@ -96,7 +92,6 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
           connection
             .query('SELECT NOW()')
             .then(() => cb(null, db))
-            .catch((err) => cb(err, null))
         })
         .catch((err) => cb(err, null))
     }
