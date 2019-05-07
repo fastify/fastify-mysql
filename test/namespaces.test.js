@@ -81,3 +81,23 @@ test('Should throw with duplicate connection names', (t) => {
     t.is(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
   })
 })
+
+test('Should throw when mysql2 fail', (t) => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  const BAD_PORT = 6000
+  const HOST = '127.0.0.1'
+
+  // We try to access throught a wrong port (MySQL listen on port 3306)
+  fastify.register(fastifyMysql, {
+    host: HOST,
+    port: BAD_PORT
+  })
+
+  fastify.ready((errors) => {
+    t.ok(errors)
+    t.is(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    fastify.close()
+  })
+})
