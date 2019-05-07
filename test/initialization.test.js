@@ -122,3 +122,69 @@ test('Promise: Should throw when mysql2 fail', (t) => {
     fastify.close()
   })
 })
+
+test('Connection - Promise: Should throw when mysql2 fail', (t) => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  const BAD_PORT = 6000
+  const HOST = '127.0.0.1'
+
+  // We try to access throught a wrong port (MySQL listen on port 3306)
+  fastify.register(fastifyMysql, {
+    host: HOST,
+    port: BAD_PORT,
+    promise: true,
+    type: 'connection'
+  })
+
+  fastify.ready().catch((errors) => {
+    t.ok(errors)
+    t.is(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+  })
+})
+
+test('Promise - Should throw when trying to register multiple instances without giving a name', (t) => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  fastify.register(fastifyMysql, {
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+
+  fastify.register(fastifyMysql, {
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+
+  fastify.ready().catch((errors) => {
+    t.ok(errors)
+    t.is(errors.message, 'fastify-mysql has already been registered')
+  })
+})
+
+test('Promise - Should throw with duplicate connection names', (t) => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+  const name = 'test'
+
+  fastify
+    .register(fastifyMysql, {
+      connectionString: 'mysql://root@localhost/mysql',
+      name
+    })
+    .register(fastifyMysql, {
+      connectionString: 'mysql://root@localhost/mysql',
+      name
+    })
+
+  fastify.ready().catch((errors) => {
+    t.ok(errors)
+    t.is(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
+  })
+})
