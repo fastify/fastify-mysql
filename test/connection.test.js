@@ -34,10 +34,12 @@ test('utils should work', (t) => {
   let fastify = null
   t.beforeEach((done) => {
     fastify = Fastify()
+
     fastify.register(fastifyMysql, {
       type: 'connection',
       connectionString: 'mysql://root@localhost/mysql'
     })
+
     done()
   })
 
@@ -50,9 +52,11 @@ test('utils should work', (t) => {
   t.test('query util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
       fastify.mysql.query('SELECT 1 AS `ping`', (err, results) => {
         t.error(err)
         t.ok(results[0].ping === 1)
+
         fastify.close()
         t.end()
       })
@@ -62,6 +66,7 @@ test('utils should work', (t) => {
   t.test('format util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
       t.is('SELECT 1 AS `now`', sqlString)
       t.end()
@@ -71,6 +76,7 @@ test('utils should work', (t) => {
   t.test('escape util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
       t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
@@ -81,6 +87,7 @@ test('utils should work', (t) => {
   t.test('escapeId util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
       t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
@@ -92,9 +99,10 @@ test('utils should work', (t) => {
 })
 
 test('promise connection', (t) => {
-  let fastify = false
+  let fastify = null
   t.beforeEach((done) => {
     fastify = Fastify()
+
     fastify.register(fastifyMysql, {
       promise: true,
       type: 'connection',
@@ -111,18 +119,20 @@ test('promise connection', (t) => {
   t.test('query util', (t) => {
     fastify.ready((err) => {
       t.error(err)
-      fastify.mysql.query('SELECT 1 AS `ping`')
-        .then(([results]) => {
-          t.error(err)
-          t.ok(results[0].ping === 1)
-          t.end()
-        })
+
+      fastify.mysql.query('SELECT 1 AS `ping`').then(([results]) => {
+        t.error(err)
+
+        t.ok(results[0].ping === 1)
+        t.end()
+      })
     })
   })
 
   t.test('format util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
       t.is('SELECT 1 AS `now`', sqlString)
       t.end()
@@ -132,6 +142,7 @@ test('promise connection', (t) => {
   t.test('escape util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
       t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
@@ -142,6 +153,18 @@ test('promise connection', (t) => {
   t.test('escapeId util', (t) => {
     fastify.ready((err) => {
       t.error(err)
+
+      const sorter = 'date'
+      const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
+      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      t.end()
+    })
+  })
+
+  t.test('Should throw when mysql2 fail to perform operation', (t) => {
+    fastify.ready((err) => {
+      t.error(err)
+
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
       t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
@@ -150,4 +173,31 @@ test('promise connection', (t) => {
   })
 
   t.end()
+})
+
+test('Promise: should throw when mysql2 fail to perform operation', (t) => {
+  t.plan(3)
+
+  const fastify = Fastify()
+  t.teardown(() => fastify.close())
+
+  fastify.register(fastifyMysql, {
+    type: 'connection',
+    name: 'test',
+    host: 'localhost',
+    user: 'root',
+    database: 'mysql',
+    promise: true
+  })
+
+  fastify.ready((err) => {
+    t.error(err)
+
+    const sql = 'SELECT fastify FROM fastify'
+
+    fastify.mysql.test.connection.query(sql).catch((errors) => {
+      t.ok(errors)
+      t.is(errors.message, `Table 'mysql.fastify' doesn't exist`)
+    })
+  })
 })
