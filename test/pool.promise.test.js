@@ -38,8 +38,22 @@ test('promise pool', (t) => {
     })
   })
 
+  t.test('mysql.pool.execute', (t) => {
+    t.plan(3)
+
+    fastify.ready((err) => {
+      t.error(err)
+
+      fastify.mysql.execute('SELECT ? AS `ping`', [1])
+        .then(([results, fields]) => {
+          t.ok(results[0].ping === 1)
+          t.ok(fields)
+        })
+    })
+  })
+
   t.test('promise pool.getConnection', (t) => {
-    t.plan(5)
+    t.plan(7)
 
     fastify.ready((err) => {
       t.error(err)
@@ -55,6 +69,12 @@ test('promise pool', (t) => {
         })
 
       fastify.mysql.query('SELECT 3 AS `ping`')
+        .then(([results, fields]) => {
+          t.ok(results[0].ping === 3)
+          t.ok(fields)
+        })
+
+      fastify.mysql.execute('SELECT ? AS `ping`', [3])
         .then(([results, fields]) => {
           t.ok(results[0].ping === 3)
           t.ok(fields)

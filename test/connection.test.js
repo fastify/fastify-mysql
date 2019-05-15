@@ -20,6 +20,7 @@ test('fastify.mysql namespace should exist', (t) => {
     t.ok(fastify.mysql.test)
     t.ok(fastify.mysql.test.connection)
     t.ok(fastify.mysql.test.query)
+    t.ok(fastify.mysql.test.execute)
 
     t.ok(fastify.mysql.test.format)
     t.ok(fastify.mysql.test.escape)
@@ -54,6 +55,20 @@ test('utils should work', (t) => {
       t.error(err)
 
       fastify.mysql.query('SELECT 1 AS `ping`', (err, results) => {
+        t.error(err)
+        t.ok(results[0].ping === 1)
+
+        fastify.close()
+        t.end()
+      })
+    })
+  })
+
+  t.test('execute util', (t) => {
+    fastify.ready((err) => {
+      t.error(err)
+
+      fastify.mysql.execute('SELECT ? as `ping`', [1], (err, results) => {
         t.error(err)
         t.ok(results[0].ping === 1)
 
@@ -121,6 +136,19 @@ test('promise connection', (t) => {
       t.error(err)
 
       fastify.mysql.query('SELECT 1 AS `ping`').then(([results]) => {
+        t.error(err)
+
+        t.ok(results[0].ping === 1)
+        t.end()
+      })
+    })
+  })
+
+  t.test('execute util', (t) => {
+    fastify.ready((err) => {
+      t.error(err)
+
+      fastify.mysql.execute('SELECT ? AS `ping`', [1]).then(([results]) => {
         t.error(err)
 
         t.ok(results[0].ping === 1)
