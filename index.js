@@ -90,7 +90,7 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
         .then((connection) => {
           db.connection = connection
           db.query = connection.query.bind(connection)
-          db.execute = connection.query.bind(connection)
+          db.execute = connection.execute.bind(connection)
 
           connection
             .query('SELECT NOW()')
