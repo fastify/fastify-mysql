@@ -19,6 +19,7 @@ This plugin will add the `mysql` namespace in your Fastify instance, with the fo
 ```
 pool: the pool instance
 query: an utility to perform a query without a transaction
+execute: an utility to perform a prepared statement without a transaction
 getConnection: get a connection from the pool
 format: an utility to generate SQL string
 escape: an utility to escape query values
