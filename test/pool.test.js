@@ -6,7 +6,7 @@ const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
 test('fastify.mysql namespace should exist', t => {
-  t.plan(8)
+  t.plan(9)
 
   const fastify = Fastify()
 
@@ -20,6 +20,7 @@ test('fastify.mysql namespace should exist', t => {
     t.ok(fastify.mysql)
     t.ok(fastify.mysql.pool)
     t.ok(fastify.mysql.query)
+    t.ok(fastify.mysql.execute)
     t.ok(fastify.mysql.getConnection)
     t.ok(fastify.mysql.format)
     t.ok(fastify.mysql.escape)
@@ -41,6 +42,27 @@ test('use query util', t => {
     t.error(err)
 
     fastify.mysql.query('SELECT NOW()', (err, result) => {
+      t.error(err)
+
+      t.ok(result.length)
+      fastify.close()
+    })
+  })
+})
+
+test('use execute util', t => {
+  t.plan(3)
+
+  const fastify = Fastify()
+
+  fastify.register(fastifyMysql, {
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+
+  fastify.ready(err => {
+    t.error(err)
+
+    fastify.mysql.execute('SELECT NOW()', (err, result) => {
       t.error(err)
 
       t.ok(result.length)
@@ -86,7 +108,7 @@ test('use getConnection util', t => {
 })
 
 test('fastify.mysql.test namespace should exist', t => {
-  t.plan(8)
+  t.plan(9)
 
   const fastify = Fastify()
 
@@ -101,6 +123,7 @@ test('fastify.mysql.test namespace should exist', t => {
     t.ok(fastify.mysql)
     t.ok(fastify.mysql.test)
     t.ok(fastify.mysql.test.pool)
+    t.ok(fastify.mysql.test.execute)
     t.ok(fastify.mysql.test.getConnection)
     t.ok(fastify.mysql.test.format)
     t.ok(fastify.mysql.test.escape)

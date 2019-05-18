@@ -64,6 +64,7 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
 
     db.pool = client
     db.query = client.query.bind(client)
+    db.execute = client.execute.bind(client)
     db.getConnection = client.getConnection.bind(client)
 
     if (!usePromise) {
@@ -81,6 +82,7 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
     if (!usePromise) {
       db.connection = client
       db.query = client.query.bind(client)
+      db.execute = client.execute.bind(client)
 
       client.query('SELECT NOW()', (err) => cb(err, db))
     } else {
@@ -88,6 +90,7 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
         .then((connection) => {
           db.connection = connection
           db.query = connection.query.bind(connection)
+          db.execute = connection.execute.bind(connection)
 
           connection
             .query('SELECT NOW()')
