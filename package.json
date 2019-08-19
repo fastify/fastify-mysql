@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "fastify": "^2.3.0",
-    "standard": "^13.0.1",
+    "standard": "^14.0.0",
     "tap": "^12.7.0"
   },
   "greenkeeper": {
