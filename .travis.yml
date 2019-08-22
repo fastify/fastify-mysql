@@ -9,6 +9,8 @@ node_js:
 services:
   - msyql
 
+dist: trusty
+
 notifications:
   email:
     on_success: never
