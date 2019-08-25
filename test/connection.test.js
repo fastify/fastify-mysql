@@ -225,7 +225,7 @@ test('Promise: should throw when mysql2 fail to perform operation', (t) => {
 
     fastify.mysql.test.connection.query(sql).catch((errors) => {
       t.ok(errors)
-      t.is(errors.message, `Table 'mysql.fastify' doesn't exist`)
+      t.is(errors.message, "Table 'mysql.fastify' doesn't exist")
     })
   })
 })
