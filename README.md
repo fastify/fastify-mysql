@@ -10,7 +10,7 @@ Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used, t
 npm i fastify-mysql --save
 ```
 ## Usage
-Add it to you project with `register`. You can pass to `register` method all of `ConnectionOptions` and `PoolOptions` properties from mysql2 package along with properties from plugin: `type`, `name`, `usePromise` and `connectionString`.
+Add it to your project with `register`. You can pass as options all of `ConnectionOptions` and `PoolOptions` properties from mysql2 package along with properties from plugin: `type`, `name`, `usePromise` and `connectionString`.
 
 This plugin will add the `mysql` namespace in your Fastify instance, with the following properties:
 ```
