@@ -3,9 +3,9 @@
 
 import { Server, IncomingMessage, ServerResponse } from "http";
 import fastify from "fastify";
-import mysql2, { ConnectionOptions } from "mysql2";
+import mysql2, { ConnectionOptions, PoolOptions } from "mysql2";
 
-export declare type FastifyMysqlOptions = ConnectionOptions & {
+export declare type FastifyMysqlOptions = ConnectionOptions & PoolOptions & {
   /**
    * Conenction type. If it is set up to something different than "connection", plugin will use mysql poll as client.
    */
@@ -24,7 +24,7 @@ export declare type FastifyMysqlOptions = ConnectionOptions & {
   /**
    * Value which will be used to connect to mysql.
    */
-  connectionString?: connectionString;
+  connectionString?: string;
 };
 
 declare const fastifyMysql: fastify.Plugin<

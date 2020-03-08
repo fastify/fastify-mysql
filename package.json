@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Fastify Mysql connection plugin",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "standard && tap test/*.test.js",
     "mariadb": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mariadb:10.1",
