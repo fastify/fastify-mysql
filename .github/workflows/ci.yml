@@ -1,0 +1,39 @@
+name: GitHub CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [10, 12, 14]
+        db: [
+          "mysql:5.5",
+          "mysql:5.7",
+          "mysql:8.0",
+          "mariadb:10.1"
+        ]
+
+    name: Node.js ${{ matrix.node }} - ${{ matrix.db }}
+
+    services:
+      mysql:
+        image: ${{ matrix.mysql }}
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install
+      run: npm install
+
+    - name: Run tests      
+      run: npm run test
