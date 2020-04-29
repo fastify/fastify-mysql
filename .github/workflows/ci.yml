@@ -10,10 +10,7 @@ jobs:
       matrix:
         node: [10, 12, 14]
         db: [
-          "mysql:5.5",
-          "mysql:5.7",
-          "mysql:8.0",
-          "mariadb:10.1"
+          "mysql:8.0"
         ]
 
     name: Node.js ${{ matrix.node }} - ${{ matrix.db }}
@@ -25,7 +22,7 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: mysql
         ports:
-          - 3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
