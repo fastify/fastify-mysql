@@ -20,7 +20,7 @@ jobs:
 
     services:
       mysql:
-        image: ${{ matrix.mysql }}
+        image: ${{ matrix.db }}
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
