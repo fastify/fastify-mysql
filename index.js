@@ -17,13 +17,9 @@ function fastifyMysql (fastify, options, next) {
 
     const client = connectionType !== 'connection' ? db.pool : db.connection
 
-    if (usePromise) {
-      fastify.addHook('onClose', async (fastify, done) => {
-        await client.end(); done()
-      })
-    } else {
-      fastify.addHook('onClose', (fastify, done) => client.end(done))
-    }
+    fastify.addHook('onClose', async (fastify, done) => {
+      await client.end(); done()
+    })
 
     if (name) {
       if (!fastify.mysql) {
