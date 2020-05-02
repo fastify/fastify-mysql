@@ -1,6 +1,7 @@
 # fastify-mysql
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  [![Build Status](https://travis-ci.org/fastify/fastify-mysql.svg?branch=master)](https://travis-ci.org/fastify/fastify-mysql) [![Greenkeeper badge](https://badges.greenkeeper.io/fastify/fastify-mysql.svg)](https://greenkeeper.io/)
+![CI workflow](https://github.com/fastify/fastify-mysql/workflows/CI%20workflow/badge.svg)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
 
 Fastify MySQL connection plugin, with this you can share the same MySQL connection pool in every part of your server.
 Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used, the options that you pass to `register` will be passed to the MySQL pool builder.
