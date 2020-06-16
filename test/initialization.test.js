@@ -6,7 +6,7 @@ const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
 test('Should not throw if registered within different scopes (with and without named instances)', (t) => {
-  t.plan(2)
+  t.plan(1)
 
   const fastify = Fastify()
   t.teardown(() => fastify.close())
@@ -35,7 +35,6 @@ test('Should not throw if registered within different scopes (with and without n
 
   fastify.ready((errors) => {
     t.error(errors)
-    t.is(errors, null)
   })
 })
 
