@@ -32,7 +32,7 @@
     "mysql2": "^2.0.0"
   },
   "devDependencies": {
-    "fastify": "^3.0.0-rc.4",
+    "fastify": "^3.0.0",
     "standard": "^14.0.0",
     "tap": "^14.10.7"
   }
