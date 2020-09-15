@@ -25,7 +25,7 @@ escapeId: an utility to escape query identifiers
 
 Example:
 ```js
-const fastify = require('fastify')
+const fastify = require('fastify')()
 
 fastify.register(require('fastify-mysql'), {
   connectionString: 'mysql://root@localhost/mysql'
@@ -55,7 +55,7 @@ fastify.listen(3000, err => {
 
 Use of `mysql.query`
 ```js
-const fastify = require('fastify')
+const fastify = require('fastify')()
 
 fastify.register(require('fastify-mysql'), {
   connectionString: 'mysql://root@localhost/mysql'
@@ -79,7 +79,7 @@ As you can see there is no need to close the client, since is done internally.
 
 Async/await is supported, when register `promise` option is `true`:
 ```js
-const fastify = require('fastify')
+const fastify = require('fastify')()
 
 fastify.register(require('fastify-mysql'), {
   promise: true,
