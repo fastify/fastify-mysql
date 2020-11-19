@@ -9,9 +9,7 @@ jobs:
     strategy:
       matrix:
         node: [10, 12, 14]
-        db: [
-          "mysql:8.0"
-        ]
+        db: ["mysql:8.0"]
 
     name: Node.js ${{ matrix.node }} - ${{ matrix.db }}
 
@@ -35,3 +33,12 @@ jobs:
 
     - name: Run tests      
       run: npm run test
+
+  automerge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v1
+        if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' }}
+        with:
+          github-token: ${{secrets.github_token}}
