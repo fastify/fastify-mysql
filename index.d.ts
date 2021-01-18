@@ -1,4 +1,4 @@
-import { FastifyPlugin } from "fastify";
+import { FastifyPluginCallback } from "fastify";
 import {
   Connection,
   ConnectionOptions,
@@ -12,35 +12,36 @@ import {
   Pool as PromisePool,
 } from "mysql2/promise";
 
-export type MySQLConnection = Pick<Connection, "query" | "execute"> & {
-  connection: Connection;
+// upstream package missed type
+type escapeId = (val: any, forbidQualified?: boolean) => string;
+
+interface BaseClient {
   format: typeof format;
   escape: typeof escape;
-};
+  escapeId: escapeId;
+}
+
+export type MySQLConnection = Pick<Connection, "query" | "execute"> & {
+  connection: Connection;
+} & BaseClient;
 
 export type MySQLPool = Pick<Pool, "query" | "execute" | "getConnection"> & {
   pool: Pool;
-  format: typeof format;
-  escape: typeof escape;
-};
+} & BaseClient;
 
 export type MySQLPromiseConnection = Pick<
   PromiseConnection,
   "query" | "execute"
 > & {
   connection: PromiseConnection;
-  format: typeof format;
-  escape: typeof escape;
-};
+} & BaseClient;
 
 export type MySQLPromisePool = Pick<
   PromisePool,
   "query" | "execute" | "getConnection"
 > & {
   pool: PromisePool;
-  format: typeof format;
-  escape: typeof escape;
-};
+} & BaseClient;
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -57,5 +58,5 @@ export interface MySQLOptions extends PoolOptions, ConnectionOptions {
   connectionString?: string;
 }
 
-export const fastifyMySQL: FastifyPlugin<MySQLOptions>;
+export const fastifyMySQL: FastifyPluginCallback<MySQLOptions>;
 export default fastifyMySQL;
