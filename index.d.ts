@@ -43,12 +43,6 @@ export type MySQLPromisePool = Pick<
   pool: PromisePool;
 } & BaseClient;
 
-declare module "fastify" {
-  interface FastifyInstance {
-    mysql: {};
-  }
-}
-
 export type ConnectionType = "connection" | "pool";
 
 export interface MySQLOptions extends PoolOptions, ConnectionOptions {
