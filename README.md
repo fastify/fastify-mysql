@@ -101,6 +101,40 @@ fastify.listen(3000, err => {
 })
 ```
 
+## TypeScript
+As `mysql2` expose four different type of client, we do not specify the typing for you. You need to specify the type yourself follow by the example below.
+```ts
+import { MySQLConnection, MySQLPool, MySQLPromiseConnection, MySQLPromisePool } from 'fastify-mysql'
+
+// if you only pass connectionString
+declare module 'fastify' {
+  interface FastifyInstance {
+    mysql: MySQLPool 
+  }
+}
+
+// if you passed type = 'connection'
+declare module 'fastify' {
+  interface FastifyInstance {
+    mysql: MySQLConnection 
+  }
+}
+
+// if you passed promise = true
+declare module 'fastify' {
+  interface FastifyInstance {
+    mysql: MySQLPromisePool 
+  }
+}
+
+// if you passed promise = true, type = 'connection'
+declare module 'fastify' {
+  interface FastifyInstance {
+    mysql: MySQLPromiseConnection 
+  }
+}
+```
+
 ## Acknowledgements
 
 This project is kindly sponsored by:
