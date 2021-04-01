@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-mysql/badge.svg)](https://snyk.io/test/github/fastify/fastify-mysql)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-Fastify MySQL connection plugin, with this you can share the same MySQL connection pool in every part of your server.
+Fastify MySQL connection plugin; with this you can share the same MySQL connection pool in every part of your server.
 Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used, the options that you pass to `register` will be passed to the MySQL pool builder.
 
 ## Install
@@ -77,7 +77,7 @@ fastify.listen(3000, err => {
   console.log(`server listening on ${fastify.server.address().port}`)
 })
 ```
-As you can see there is no need to close the client, since is done internally.
+As you can see there is no need to close the client, since it is done internally.
 
 Async/await is supported, when register `promise` option is `true`:
 ```js
@@ -104,7 +104,7 @@ fastify.listen(3000, err => {
 ```
 
 ## TypeScript
-As `mysql2` expose four different type of client, we do not specify the typing for you. You need to specify the type yourself follow by the example below.
+As `mysql2` expose four different type of client, we do not specify the typing for you. You need to specify the type yourself following the example below.
 ```ts
 import { MySQLConnection, MySQLPool, MySQLPromiseConnection, MySQLPromisePool } from 'fastify-mysql'
 
