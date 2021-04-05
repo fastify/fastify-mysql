@@ -7,7 +7,7 @@ const fastifyMysql = require('../index')
 test('promise pool', (t) => {
   let fastify
 
-  t.beforeEach((done) => {
+  t.beforeEach(() => {
     fastify = Fastify()
     fastify.register(fastifyMysql, {
       promise: true,
@@ -16,12 +16,10 @@ test('promise pool', (t) => {
       database: 'mysql',
       connectionLimit: 1
     })
-    done()
   })
 
-  t.afterEach((done) => {
+  t.afterEach(() => {
     fastify.close()
-    done()
   })
 
   t.test('mysql.pool.query', (t) => {

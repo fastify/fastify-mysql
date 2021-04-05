@@ -54,7 +54,7 @@ test('Should throw when trying to register multiple instances without giving a n
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, 'fastify-mysql has already been registered')
+    t.equal(errors.message, 'fastify-mysql has already been registered')
   })
 })
 
@@ -77,7 +77,7 @@ test('Should throw with duplicate connection names', (t) => {
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
+    t.equal(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
   })
 })
 
@@ -98,7 +98,7 @@ test('Should throw when mysql2 fail', (t) => {
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    t.equal(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
   })
 })
 
@@ -120,7 +120,7 @@ test('Promise: Should throw when mysql2 fail', (t) => {
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    t.equal(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
   })
 })
 
@@ -143,7 +143,7 @@ test('Connection - Promise: Should throw when mysql2 fail', (t) => {
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    t.equal(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
     t.pass()
   })
 })
@@ -164,7 +164,7 @@ test('Promise - Should throw when trying to register multiple instances without 
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, 'fastify-mysql has already been registered')
+    t.equal(errors.message, 'fastify-mysql has already been registered')
     t.pass()
   })
 })
@@ -188,7 +188,7 @@ test('Promise - Should throw with duplicate connection names', (t) => {
 
   fastify.ready((errors) => {
     t.ok(errors)
-    t.is(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
+    t.equal(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
     t.pass()
   })
 })

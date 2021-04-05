@@ -146,14 +146,14 @@ test('synchronous functions', (t) => {
 
     test('mysql.format', (t) => {
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.is('SELECT 1 AS `now`', sqlString)
+      t.equal('SELECT 1 AS `now`', sqlString)
       t.end()
     })
 
     test('mysql.escape', (t) => {
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
-      t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      t.equal(sql, `SELECT * FROM users WHERE id = '${id}'`)
       t.end()
     })
 
