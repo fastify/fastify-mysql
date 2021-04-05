@@ -83,7 +83,7 @@ test('utils should work', (t) => {
       t.error(err)
 
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.is('SELECT 1 AS `now`', sqlString)
+      t.equal('SELECT 1 AS `now`', sqlString)
       t.end()
     })
   })
@@ -94,7 +94,7 @@ test('utils should work', (t) => {
 
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
-      t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      t.equal(sql, `SELECT * FROM users WHERE id = '${id}'`)
       t.end()
     })
   })
@@ -162,7 +162,7 @@ test('promise connection', (t) => {
       t.error(err)
 
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.is('SELECT 1 AS `now`', sqlString)
+      t.equal('SELECT 1 AS `now`', sqlString)
       t.end()
     })
   })
@@ -173,7 +173,7 @@ test('promise connection', (t) => {
 
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
-      t.is(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      t.equal(sql, `SELECT * FROM users WHERE id = '${id}'`)
       t.end()
     })
   })
@@ -225,7 +225,7 @@ test('Promise: should throw when mysql2 fail to perform operation', (t) => {
 
     fastify.mysql.test.connection.query(sql).catch((errors) => {
       t.ok(errors)
-      t.is(errors.message, "Table 'mysql.fastify' doesn't exist")
+      t.equal(errors.message, "Table 'mysql.fastify' doesn't exist")
     })
   })
 })
