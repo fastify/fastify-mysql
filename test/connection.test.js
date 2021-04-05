@@ -33,21 +33,18 @@ test('fastify.mysql namespace should exist', (t) => {
 
 test('utils should work', (t) => {
   let fastify = null
-  t.beforeEach((done) => {
+  t.beforeEach(() => {
     fastify = Fastify()
 
     fastify.register(fastifyMysql, {
       type: 'connection',
       connectionString: 'mysql://root@localhost/mysql'
     })
-
-    done()
   })
 
-  t.afterEach((done) => {
+  t.afterEach(() => {
     fastify.close()
     fastify = null
-    done()
   })
 
   t.test('query util', (t) => {
@@ -115,7 +112,7 @@ test('utils should work', (t) => {
 
 test('promise connection', (t) => {
   let fastify = null
-  t.beforeEach((done) => {
+  t.beforeEach(() => {
     fastify = Fastify()
 
     fastify.register(fastifyMysql, {
@@ -123,12 +120,10 @@ test('promise connection', (t) => {
       type: 'connection',
       connectionString: 'mysql://root@localhost/mysql'
     })
-    done()
   })
-  t.afterEach((done) => {
+  t.afterEach(() => {
     fastify.close()
     fastify = null
-    done()
   })
 
   t.test('query util', (t) => {
