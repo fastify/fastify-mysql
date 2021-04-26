@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [10, 12, 14, 16]
         db: ["mysql:8.0"]
 
     name: Node.js ${{ matrix.node }} - ${{ matrix.db }}
@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          npm run test
+          npm test
 
   automerge:
     needs: test
