@@ -1,6 +1,6 @@
 {
-  "name": "fastify-mysql",
-  "version": "2.1.0",
+  "name": "@fastify/mysql",
+  "version": "3.0.0",
   "description": "Fastify Mysql connection plugin",
   "main": "index.js",
   "types": "index.d.ts",
@@ -39,5 +39,8 @@
     "standard": "^17.0.0",
     "tap": "^16.0.0",
     "tsd": "^0.20.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
