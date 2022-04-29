@@ -1,7 +1,7 @@
-# fastify-mysql
+# @fastify/mysql
 
 ![CI](https://github.com/fastify/fastify-mysql/workflows/CI/badge.svg)
-[![NPM version](https://img.shields.io/npm/v/fastify-mysql.svg?style=flat)](https://www.npmjs.com/package/fastify-mysql)
+[![NPM version](https://img.shields.io/npm/v/@fastify/mysql.svg?style=flat)](https://www.npmjs.com/package/@fastify/mysql)
 [![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-mysql/badge.svg)](https://snyk.io/test/github/fastify/fastify-mysql)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
@@ -10,7 +10,7 @@ Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. I
 
 ## Install
 ```
-npm i fastify-mysql --save
+npm i @fastify/mysql --save
 ```
 ## Usage
 Add it to you project with `register` and you are done!
@@ -29,7 +29,7 @@ Example:
 ```js
 const fastify = require('fastify')()
 
-fastify.register(require('fastify-mysql'), {
+fastify.register(require('@fastify/mysql'), {
   connectionString: 'mysql://root@localhost/mysql'
 })
 
@@ -59,7 +59,7 @@ Use of `mysql.query`
 ```js
 const fastify = require('fastify')()
 
-fastify.register(require('fastify-mysql'), {
+fastify.register(require('@fastify/mysql'), {
   connectionString: 'mysql://root@localhost/mysql'
 })
 
@@ -83,7 +83,7 @@ Async/await is supported, when register `promise` option is `true`:
 ```js
 const fastify = require('fastify')()
 
-fastify.register(require('fastify-mysql'), {
+fastify.register(require('@fastify/mysql'), {
   promise: true,
   connectionString: 'mysql://root@localhost/mysql'
 })
@@ -106,7 +106,7 @@ fastify.listen(3000, err => {
 ## TypeScript
 As `mysql2` expose four different type of client, we do not specify the typing for you. You need to specify the type yourself following the example below.
 ```ts
-import { MySQLConnection, MySQLPool, MySQLPromiseConnection, MySQLPromisePool } from 'fastify-mysql'
+import { MySQLConnection, MySQLPool, MySQLPromiseConnection, MySQLPromisePool } from '@fastify/mysql'
 
 // if you only pass connectionString
 declare module 'fastify' {
