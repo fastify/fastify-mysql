@@ -14,10 +14,9 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 10
-          - 12
           - 14
           - 16
+          - 18
         db:
           - mysql:8.0
     name: Node.js ${{ matrix.node }} - ${{ matrix.db }}
