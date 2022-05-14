@@ -46,8 +46,8 @@ function fastifyMysql (fastify, options, next) {
 }
 
 module.exports = fp(fastifyMysql, {
-  fastify: '>=1.0.0',
-  name: 'fastify-mysql'
+  fastify: '4.x',
+  name: '@fastify/mysql'
 })
 
 function _createConnection ({ connectionType, options, usePromise }, cb) {
@@ -55,9 +55,9 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
   const mysql = usePromise ? require('mysql2/promise') : require('mysql2')
 
   const db = {
-    format: format,
-    escape: escape,
-    escapeId: escapeId
+    format,
+    escape,
+    escapeId
   }
 
   let client = {}
