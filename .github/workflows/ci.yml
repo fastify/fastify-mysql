@@ -1,55 +1,15 @@
 name: CI
-'on':
+
+on:
   push:
     paths-ignore:
-      - docs/**
+      - 'docs/**'
       - '*.md'
   pull_request:
     paths-ignore:
-      - docs/**
+      - 'docs/**'
       - '*.md'
+
 jobs:
   test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version:
-          - 14
-          - 16
-          - 18
-        db:
-          - mysql:8.0
-    name: Node.js ${{ matrix.node }} - ${{ matrix.db }}
-    services:
-      mysql:
-        image: ${{ matrix.db }}
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-          MYSQL_DATABASE: mysql
-        ports:
-          - '3306:3306'
-        options: >-
-          --health-cmd="mysqladmin ping" --health-interval=10s
-          --health-timeout=5s --health-retries=3
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install Dependencies
-        run: |
-          npm install --ignore-scripts
-      - name: Run Tests
-        run: |
-          npm test
-  automerge:
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
-    steps:
-      - uses: fastify/github-action-merge-dependabot@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+    uses: fastify/workflows/.github/workflows/plugins-ci-mysql.yml@v3

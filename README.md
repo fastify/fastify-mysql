@@ -2,7 +2,6 @@
 
 ![CI](https://github.com/fastify/fastify-mysql/workflows/CI/badge.svg)
 [![NPM version](https://img.shields.io/npm/v/@fastify/mysql.svg?style=flat)](https://www.npmjs.com/package/@fastify/mysql)
-[![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-mysql/badge.svg)](https://snyk.io/test/github/fastify/fastify-mysql)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 Fastify MySQL connection plugin; with this you can share the same MySQL connection pool in every part of your server.
