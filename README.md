@@ -9,7 +9,7 @@ Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. I
 
 ## Install
 ```
-npm i @fastify/mysql --save
+npm i @fastify/mysql
 ```
 ## Usage
 Add it to you project with `register` and you are done!
