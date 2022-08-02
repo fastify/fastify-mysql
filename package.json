@@ -5,13 +5,15 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "lint": "standard",
     "mariadb": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mariadb:10.1",
     "mysql": "npm run mysql:8.0",
     "mysql:5.7": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.7",
     "mysql:5.5": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.5",
     "mysql:8.0": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:8.0",
-    "test": "standard && tap test/*.test.js && npm run typescript",
-    "typescript": "tsd"
+    "test": "npm run test:unit && npm run test:typescript",
+    "test:unit": "tap test/*.test.js",
+    "test:typescript": "tsd"
   },
   "repository": {
     "type": "git",
