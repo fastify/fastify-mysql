@@ -12,7 +12,7 @@
     "mysql:5.5": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.5",
     "mysql:8.0": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:8.0",
     "test": "npm run test:unit && npm run test:typescript",
-    "test:unit": "tap test/*.test.js",
+    "test:unit": "tap",
     "test:typescript": "tsd"
   },
   "repository": {
