@@ -4,7 +4,7 @@ import fastifyMysql, {
   MySQLPool,
   MySQLPromiseConnection,
   MySQLPromisePool,
-} from ".";
+} from "..";
 
 declare module "fastify" {
   interface FastifyInstance {
