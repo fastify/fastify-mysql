@@ -2,3 +2,6 @@ jobs: 1
 jsx: false
 ts: false
 flow: false
+
+files:
+  - test/**/*.test.js
