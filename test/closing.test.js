@@ -1,3 +1,5 @@
+'use strict'
+
 const test = require('tap').test
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
