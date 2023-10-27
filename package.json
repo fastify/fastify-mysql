@@ -3,6 +3,7 @@
   "version": "4.1.0",
   "description": "Fastify Mysql connection plugin",
   "main": "index.js",
+  "type": "commonjs",
   "types": "types/index.d.ts",
   "scripts": {
     "lint": "standard",
