@@ -6,6 +6,9 @@ import {
   format,
   Pool,
   PoolOptions,
+  ProcedureCallPacket,
+  ResultSetHeader,
+  RowDataPacket,
 } from "mysql2";
 import {
   Connection as PromiseConnection,
@@ -55,6 +58,12 @@ declare namespace fastifyMysql {
     promise?: boolean;
     connectionString?: string;
   }
+
+  export type MySQLProcedureCallPacket<
+    T = [MySQLRowDataPacket[], MySQLResultSetHeader] | MySQLResultSetHeader,
+  > = ProcedureCallPacket<T>
+  export type MySQLResultSetHeader = ResultSetHeader
+  export type MySQLRowDataPacket = RowDataPacket
 
   export const fastifyMysql: FastifyMysql
   export { fastifyMysql as default } 
