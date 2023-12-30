@@ -100,9 +100,33 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
   }
 }
 
+function isMySQLPool (obj) {
+  if (!('pool' in obj)) return false
+  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && typeof obj.getConnection === 'function' && typeof obj.pool === 'object'
+}
+
+function isMySQLPromisePool (obj) {
+  if (!('pool' in obj)) return false
+  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && typeof obj.getConnection === 'function' && typeof obj.pool === 'object'
+}
+
+function isMySQLConnection (obj) {
+  if (!('connection' in obj)) return false
+  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && obj.connection && typeof obj.connection === 'object'
+}
+
+function isMySQLPromiseConnection (obj) {
+  if (!('connection' in obj)) return false
+  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && obj.connection && typeof obj.connection === 'object'
+}
+
 module.exports = fp(fastifyMysql, {
   fastify: '4.x',
   name: '@fastify/mysql'
 })
 module.exports.default = fastifyMysql
 module.exports.fastifyMysql = fastifyMysql
+module.exports.isMySQLPool = isMySQLPool
+module.exports.isMySQLPromisePool = isMySQLPromisePool
+module.exports.isMySQLConnection = isMySQLConnection
+module.exports.isMySQLPromiseConnection = isMySQLPromiseConnection
