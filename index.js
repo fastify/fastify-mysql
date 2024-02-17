@@ -100,24 +100,28 @@ function _createConnection ({ connectionType, options, usePromise }, cb) {
   }
 }
 
-function isMySQLPool (obj) {
-  if (!('pool' in obj)) return false
+function isMySQLPoolOrPromisePool (obj) {
   return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && typeof obj.getConnection === 'function' && typeof obj.pool === 'object'
+}
+
+function isMySQLConnectionOrPromiseConnection (obj) {
+  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && typeof obj.connection === 'object'
+}
+
+function isMySQLPool (obj) {
+  return isMySQLPoolOrPromisePool(obj) && typeof obj.pool.promise === 'function'
 }
 
 function isMySQLPromisePool (obj) {
-  if (!('pool' in obj)) return false
-  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && typeof obj.getConnection === 'function' && typeof obj.pool === 'object'
+  return isMySQLPoolOrPromisePool(obj) && typeof obj.threadId === 'number' && obj.pool.promise === undefined
 }
 
 function isMySQLConnection (obj) {
-  if (!('connection' in obj)) return false
-  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && obj.connection && typeof obj.connection === 'object'
+  return isMySQLConnectionOrPromiseConnection(obj) && typeof obj.connection.promise === 'function' && typeof obj.connection.authorized === 'boolean'
 }
 
 function isMySQLPromiseConnection (obj) {
-  if (!('connection' in obj)) return false
-  return obj && typeof obj.query === 'function' && typeof obj.execute === 'function' && obj.connection && typeof obj.connection === 'object'
+  return isMySQLConnectionOrPromiseConnection(obj) && typeof obj.threadId === 'number' && obj.connection.promise === undefined
 }
 
 module.exports = fp(fastifyMysql, {

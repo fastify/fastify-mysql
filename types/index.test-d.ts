@@ -13,6 +13,9 @@ import fastifyMysql, {
   isMySQLPool,
 } from "..";
 import { expectType } from 'tsd';
+import { Pool } from "mysql2/typings/mysql/lib/Pool";
+import { Connection, PoolConnection } from "mysql2";
+import { Pool as PromisePool, Connection as PromiseConnection, PoolConnection as PromisePoolConnection } from "mysql2/promise";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -23,6 +26,10 @@ declare module "fastify" {
       | MySQLPromiseConnection;
   }
 }
+
+type PoolGetConnectionType = (callback: (err: NodeJS.ErrnoException | null, connection: PoolConnection) => any) => void;
+type PoolPromiseType = (promiseImpl?: PromiseConstructor) => PromisePool;
+type ConnectionPromiseType = (promiseImpl?: PromiseConstructor) => PromiseConnection;
 
 const app = fastify();
 app
@@ -41,6 +48,9 @@ app
         con.release();
       });
       mysql.pool.end();
+      expectType<PoolGetConnectionType>(app.mysql.getConnection);
+      expectType<Pool>(app.mysql.pool);
+      expectType<PoolPromiseType>(app.mysql.pool.promise);
     }
   });
 
@@ -60,6 +70,8 @@ app
       const con = await mysql.getConnection();
       con.release();
       mysql.pool.end();
+      expectType<() => Promise<PromisePoolConnection>>(app.mysql.getConnection);
+      expectType<PromisePool>(app.mysql.pool);
     }
   });
 
@@ -77,6 +89,9 @@ app
       mysql.query("SELECT NOW()", function () {});
       mysql.execute("SELECT NOW()", function () {});
       mysql.connection.end();
+      expectType<Connection>(app.mysql.connection);
+      expectType<ConnectionPromiseType>(app.mysql.connection.promise);
+      expectType<boolean>(app.mysql.connection.authorized);
     }
   });
 
@@ -95,6 +110,8 @@ app
       await mysql.query("SELECT NOW()");
       await mysql.execute("SELECT NOW()");
       mysql.connection.end();
+      expectType<PromiseConnection>(app.mysql.connection);
+      expectType<number>(app.mysql.connection.threadId);
     }
   });
 
