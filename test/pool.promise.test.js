@@ -3,6 +3,7 @@
 const test = require('tap').test
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
+const { isMySQLPromisePool, isMySQLPromiseConnection } = fastifyMysql
 
 test('promise pool', (t) => {
   let fastify
@@ -81,4 +82,20 @@ test('promise pool', (t) => {
   })
 
   t.end()
+})
+
+test('isMySQLPromisePool is true', (t) => {
+  t.plan(3)
+  const fastify = Fastify()
+  fastify.register(fastifyMysql, {
+    promise: true,
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+  fastify.ready((err) => {
+    t.error(err)
+    t.equal(isMySQLPromisePool(fastify.mysql), true)
+    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
+    t.end()
+  })
+  fastify.close()
 })
