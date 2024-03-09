@@ -136,6 +136,64 @@ declare module 'fastify' {
 }
 ```
 
+#### MySQLRowDataPacket 
+Ability to add type for return data using mysql2 [RowDataPacket](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#rowdatapacket). 
+
+```
+const fastifyMysql, { MySQLRowDataPacket } from '@fastify/mysql'
+
+const app = fastify();
+
+app.register(fastifyMysql, {
+  connectionString: "mysql://root@localhost/mysql",
+});
+
+app.get("/", async () => {
+  const connection = app.mysql;
+
+  // SELECT
+  const [rows, fields] = await connection.query<MySQLRowDataPacket[]>(
+    "SELECT 1 + 1 AS `test`;",
+  );
+
+  /**
+   * @rows: [ { test: 2 } ]
+   */
+  return rows[0];
+});
+```
+
+#### MySQLResultSetHeader 
+Ability to add type for return data using mysql2 [ResultSetHeader](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#resultsetheader). 
+
+```
+const fastifyMysql, { MySQLResultSetHeader } from '@fastify/mysql'
+
+const app = fastify();
+
+app.register(fastifyMysql, {
+  connectionString: "mysql://root@localhost/mysql",
+});
+
+app.get("/", async () => {
+  const connection = app.mysql;
+  const result = await connection.query<MySQLResultSetHeader>("SET @1 = 1");
+
+  /**
+   * @result: ResultSetHeader {
+      fieldCount: 0,
+      affectedRows: 0,
+      insertId: 0,
+      info: '',
+      serverStatus: 2,
+      warningStatus: 0,
+      changedRows: 0
+    }
+   */
+  return result
+});
+```
+
 ## Acknowledgements
 
 This project is kindly sponsored by:
