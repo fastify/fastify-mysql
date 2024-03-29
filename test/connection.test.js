@@ -200,7 +200,7 @@ test('promise connection', (t) => {
 })
 
 test('isMySQLConnection is true', (t) => {
-  t.plan(3)
+  t.plan(5)
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     type: 'connection',
@@ -210,6 +210,8 @@ test('isMySQLConnection is true', (t) => {
     t.error(err)
     t.equal(isMySQLConnection(fastify.mysql), true)
     t.equal(isMySQLPool(fastify.mysql), false)
+    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
+    t.equal(isMySQLPromisePool(fastify.mysql), false)
     t.end()
   })
   fastify.close()
@@ -227,6 +229,8 @@ test('isMySQLPromiseConnection is true', (t) => {
     t.error(err)
     t.equal(isMySQLPromiseConnection(fastify.mysql), true)
     t.equal(isMySQLPromisePool(fastify.mysql), false)
+    t.equal(isMySQLConnection(fastify.mysql), false)
+    t.equal(isMySQLPool(fastify.mysql), false)
     t.end()
   })
   fastify.close()
