@@ -5,7 +5,9 @@
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 Fastify MySQL connection plugin; with this you can share the same MySQL connection pool in every part of your server.
-Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options that you pass to `register` will be passed to the MySQL pool builder.
+Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options that you pass to `register` will be passed to the MySQL pool builder. 
+
+_Important:_ All MySQL2 options will be ignored when using `connectionString`, if you want to pass additional options to MySQL2 use `uri` instead of `connectionString`.
 
 ## Install
 ```
