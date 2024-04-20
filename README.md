@@ -194,6 +194,83 @@ app.get("/", async () => {
 });
 ```
 
+##### isMySQLPool
+Method to check if fastify decorator, mysql is type of [MySQLPool](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L32)
+
+```typescript
+const app = fastify();
+app
+  .register(fastifyMysql, {
+    connectionString: "mysql://root@localhost/mysql",
+  })
+  .after(function (err) {
+    if (isMySQLPool(app.mysql)) {
+      const mysql = app.mysql
+      mysql.getConnection(function (err, con) {
+        con.release();
+      });
+      mysql.pool.end();
+    }
+  })
+```
+
+
+##### isMySQLPromisePool 
+Method to check if fastify decorator, mysql is type of [MySQLPromisePool](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L43)
+
+```typescript
+app
+  .register(fastifyMysql, {
+    promise: true,
+    connectionString: "mysql://root@localhost/mysql",
+  })
+  .after(async function (err) {
+    if (isMySQLPromisePool(app.mysql)) {
+      const mysql = app.mysql
+      const con = await mysql.getConnection();
+      con.release();
+      mysql.pool.end();
+    }
+  });
+```
+
+
+##### isMySQLConnection 
+Method to check if fastify decorator, mysql is type of [MySQLConnection](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L28)
+
+```typescript
+app
+  .register(fastifyMysql, {
+    type: "connection",
+    connectionString: "mysql://root@localhost/mysql",
+  })
+  .after(async function (err) {
+    if (isMySQLConnection(app.mysql)) {
+      const mysql = app.mysql
+      mysql.connection.end();
+    }
+  });
+```
+
+
+##### isMySQLPromiseConnection 
+Method to check if fastify decorator, mysql is type of [MySQLPromiseConnection](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L36)
+
+```typescript
+app
+  .register(fastifyMysql, {
+    type: "connection",
+    promise: true,
+    connectionString: "mysql://root@localhost/mysql",
+  })
+  .after(async function (err) {
+    if (isMySQLPromiseConnection(app.mysql)) {
+      const mysql = app.mysql
+      mysql.connection.end();
+    }
+  });
+```
+
 ## Acknowledgements
 
 This project is kindly sponsored by:
