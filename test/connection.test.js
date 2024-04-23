@@ -218,7 +218,7 @@ test('isMySQLConnection is true', (t) => {
 })
 
 test('isMySQLPromiseConnection is true', (t) => {
-  t.plan(3)
+  t.plan(5)
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     promise: true,

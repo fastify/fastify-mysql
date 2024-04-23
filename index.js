@@ -113,7 +113,7 @@ function isMySQLPool (obj) {
 }
 
 function isMySQLPromisePool (obj) {
-  return isMySQLPoolOrPromisePool(obj) && typeof obj.threadId === 'number' && obj.pool.promise === undefined
+  return isMySQLPoolOrPromisePool(obj) && obj.pool.promise === undefined
 }
 
 function isMySQLConnection (obj) {
@@ -121,7 +121,7 @@ function isMySQLConnection (obj) {
 }
 
 function isMySQLPromiseConnection (obj) {
-  return isMySQLConnectionOrPromiseConnection(obj) && typeof obj.threadId === 'number' && obj.connection.promise === undefined
+  return isMySQLConnectionOrPromiseConnection(obj) && obj.connection.promise === undefined
 }
 
 module.exports = fp(fastifyMysql, {
