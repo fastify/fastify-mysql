@@ -6,6 +6,9 @@ import {
   format,
   Pool,
   PoolOptions,
+  ProcedureCallPacket,
+  ResultSetHeader,
+  RowDataPacket,
 } from "mysql2";
 import {
   Connection as PromiseConnection,
@@ -15,6 +18,12 @@ import {
 type FastifyMysql = FastifyPluginCallback<fastifyMysql.MySQLOptions>;
 
 declare namespace fastifyMysql {
+
+  type MySQLPoolConnection = MySQLPool | MySQLConnection | MySQLPromisePool | MySQLPromiseConnection;
+  export function isMySQLPool(obj: MySQLPoolConnection): obj is MySQLPool;
+  export function isMySQLPromisePool(obj: MySQLPoolConnection): obj is MySQLPromisePool;
+  export function isMySQLConnection(obj: MySQLPoolConnection): obj is MySQLConnection;
+  export function isMySQLPromiseConnection(obj: MySQLPoolConnection): obj is MySQLPromiseConnection;
 
   // upstream package missed type
   type escapeId = (val: any, forbidQualified?: boolean) => string;
@@ -55,6 +64,12 @@ declare namespace fastifyMysql {
     promise?: boolean;
     connectionString?: string;
   }
+
+  export type MySQLProcedureCallPacket<
+    T = [MySQLRowDataPacket[], MySQLResultSetHeader] | MySQLResultSetHeader,
+  > = ProcedureCallPacket<T>
+  export type MySQLResultSetHeader = ResultSetHeader
+  export type MySQLRowDataPacket = RowDataPacket
 
   export const fastifyMysql: FastifyMysql
   export { fastifyMysql as default } 

@@ -3,6 +3,7 @@
 const test = require('tap').test
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
+const { isMySQLPool, isMySQLPromisePool, isMySQLConnection, isMySQLPromiseConnection } = fastifyMysql
 
 test('fastify.mysql namespace should exist', (t) => {
   const fastify = Fastify()
@@ -196,6 +197,43 @@ test('promise connection', (t) => {
   })
 
   t.end()
+})
+
+test('isMySQLConnection is true', (t) => {
+  t.plan(5)
+  const fastify = Fastify()
+  fastify.register(fastifyMysql, {
+    type: 'connection',
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+  fastify.ready((err) => {
+    t.error(err)
+    t.equal(isMySQLConnection(fastify.mysql), true)
+    t.equal(isMySQLPool(fastify.mysql), false)
+    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
+    t.equal(isMySQLPromisePool(fastify.mysql), false)
+    t.end()
+  })
+  fastify.close()
+})
+
+test('isMySQLPromiseConnection is true', (t) => {
+  t.plan(5)
+  const fastify = Fastify()
+  fastify.register(fastifyMysql, {
+    promise: true,
+    type: 'connection',
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+  fastify.ready((err) => {
+    t.error(err)
+    t.equal(isMySQLPromiseConnection(fastify.mysql), true)
+    t.equal(isMySQLPromisePool(fastify.mysql), false)
+    t.equal(isMySQLConnection(fastify.mysql), false)
+    t.equal(isMySQLPool(fastify.mysql), false)
+    t.end()
+  })
+  fastify.close()
 })
 
 test('Promise: should throw when mysql2 fail to perform operation', (t) => {

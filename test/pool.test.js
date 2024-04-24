@@ -4,6 +4,7 @@ const t = require('tap')
 const test = t.test
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
+const { isMySQLPool, isMySQLPromisePool, isMySQLConnection, isMySQLPromiseConnection } = fastifyMysql
 
 test('fastify.mysql namespace should exist', t => {
   t.plan(9)
@@ -167,4 +168,21 @@ test('synchronous functions', (t) => {
     fastify.close()
     t.end()
   })
+})
+
+test('isMySQLPool is true', (t) => {
+  t.plan(5)
+  const fastify = Fastify()
+  fastify.register(fastifyMysql, {
+    connectionString: 'mysql://root@localhost/mysql'
+  })
+  fastify.ready((err) => {
+    t.error(err)
+    t.equal(isMySQLPool(fastify.mysql), true)
+    t.equal(isMySQLConnection(fastify.mysql), false)
+    t.equal(isMySQLPromisePool(fastify.mysql), false)
+    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
+    t.end()
+  })
+  fastify.close()
 })
