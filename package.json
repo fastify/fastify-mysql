@@ -34,7 +34,7 @@
   "homepage": "https://github.com/fastify/fastify-mysql#readme",
   "dependencies": {
     "fastify-plugin": "^4.0.0",
-    "mysql2": "^3.3.1"
+    "mysql2": "^3.9.7"
   },
   "devDependencies": {
     "@types/node": "^20.1.0",
