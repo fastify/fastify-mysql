@@ -40,8 +40,8 @@
     "@types/node": "^20.11.30",
     "fastify": "^5.0.0-alpha.1",
     "standard": "^17.1.0",
-    "tap": "^18.7.1",
-    "tsd": "^0.31.7"
+    "tap": "^19.2.5",
+    "tsd": "^0.31.1"
   },
   "publishConfig": {
     "access": "public"
