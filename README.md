@@ -141,7 +141,7 @@ declare module 'fastify' {
 #### MySQLRowDataPacket 
 Ability to add type for return data using mysql2 [RowDataPacket](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#rowdatapacket). 
 
-```
+```js
 const fastifyMysql, { MySQLRowDataPacket } from '@fastify/mysql'
 
 const app = fastify();
@@ -168,7 +168,7 @@ app.get("/", async () => {
 #### MySQLResultSetHeader 
 Ability to add type for return data using mysql2 [ResultSetHeader](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#resultsetheader). 
 
-```
+```js
 const fastifyMysql, { MySQLResultSetHeader } from '@fastify/mysql'
 
 const app = fastify();
