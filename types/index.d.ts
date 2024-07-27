@@ -64,11 +64,6 @@ declare namespace fastifyMysql {
     promise?: boolean;
     connectionString?: string;
   }
-  
-  /**
-   * @deprecated Use FastifyMySQLOptions instead
-   */
-  export interface MySQLOptions extends FastifyMySQLOptions {}
 
   export type MySQLProcedureCallPacket<
     T = [MySQLRowDataPacket[], MySQLResultSetHeader] | MySQLResultSetHeader,
