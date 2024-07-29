@@ -15,7 +15,7 @@ import {
   Pool as PromisePool,
 } from "mysql2/promise";
 
-type FastifyMysql = FastifyPluginCallback<fastifyMysql.MySQLOptions>;
+type FastifyMysql = FastifyPluginCallback<fastifyMysql.FastifyMySQLOptions>;
 
 declare namespace fastifyMysql {
 
@@ -58,7 +58,7 @@ declare namespace fastifyMysql {
 
   export type ConnectionType = "connection" | "pool";
 
-  export interface MySQLOptions extends PoolOptions, ConnectionOptions {
+  export interface FastifyMySQLOptions extends PoolOptions, ConnectionOptions {
     type?: ConnectionType;
     name?: string;
     promise?: boolean;
@@ -72,7 +72,12 @@ declare namespace fastifyMysql {
   export type MySQLRowDataPacket = RowDataPacket
 
   export const fastifyMysql: FastifyMysql
-  export { fastifyMysql as default } 
+  export { fastifyMysql as default }
+
+  export {
+    ResultSetHeader,
+    RowDataPacket,
+  }
 }
 
 declare function fastifyMysql(...params: Parameters<FastifyMysql>): ReturnType<FastifyMysql>
