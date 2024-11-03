@@ -5,7 +5,7 @@
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 Fastify MySQL connection plugin; with this you can share the same MySQL connection pool in every part of your server.
-Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options that you pass to `register` will be passed to the MySQL pool builder. 
+Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options that you pass to `register` will be passed to the MySQL pool builder.
 
 _Important:_ All MySQL2 options will be ignored when using `connectionString`, if you want to pass additional options to MySQL2 use `uri` instead of `connectionString`.
 
@@ -112,34 +112,34 @@ import { MySQLConnection, MySQLPool, MySQLPromiseConnection, MySQLPromisePool } 
 // if you only pass connectionString
 declare module 'fastify' {
   interface FastifyInstance {
-    mysql: MySQLPool 
+    mysql: MySQLPool
   }
 }
 
 // if you passed type = 'connection'
 declare module 'fastify' {
   interface FastifyInstance {
-    mysql: MySQLConnection 
+    mysql: MySQLConnection
   }
 }
 
 // if you passed promise = true
 declare module 'fastify' {
   interface FastifyInstance {
-    mysql: MySQLPromisePool 
+    mysql: MySQLPromisePool
   }
 }
 
 // if you passed promise = true, type = 'connection'
 declare module 'fastify' {
   interface FastifyInstance {
-    mysql: MySQLPromiseConnection 
+    mysql: MySQLPromiseConnection
   }
 }
 ```
 
-#### MySQLRowDataPacket 
-Ability to add type for return data using mysql2 [RowDataPacket](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#rowdatapacket). 
+#### MySQLRowDataPacket
+Ability to add type for return data using mysql2 [RowDataPacket](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#rowdatapacket).
 
 ```js
 const fastifyMysql, { MySQLRowDataPacket } from '@fastify/mysql'
@@ -165,8 +165,8 @@ app.get("/", async () => {
 });
 ```
 
-#### MySQLResultSetHeader 
-Ability to add type for return data using mysql2 [ResultSetHeader](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#resultsetheader). 
+#### MySQLResultSetHeader
+Ability to add type for return data using mysql2 [ResultSetHeader](https://sidorares.github.io/node-mysql2/docs/documentation/typescript-examples#resultsetheader).
 
 ```js
 const fastifyMysql, { MySQLResultSetHeader } from '@fastify/mysql'
@@ -217,7 +217,7 @@ app
 ```
 
 
-##### isMySQLPromisePool 
+##### isMySQLPromisePool
 Method to check if fastify decorator, mysql is type of [MySQLPromisePool](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L43)
 
 ```typescript
@@ -237,7 +237,7 @@ app
 ```
 
 
-##### isMySQLConnection 
+##### isMySQLConnection
 Method to check if fastify decorator, mysql is type of [MySQLConnection](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L28)
 
 ```typescript
@@ -255,7 +255,7 @@ app
 ```
 
 
-##### isMySQLPromiseConnection 
+##### isMySQLPromiseConnection
 Method to check if fastify decorator, mysql is type of [MySQLPromiseConnection](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L36)
 
 ```typescript
