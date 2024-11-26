@@ -1,15 +1,14 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
-test('Should not throw if registered within different scopes (with and without named instances)', (t) => {
+test('Should not throw if registered within different scopes (with and without named instances)', (t, done) => {
   t.plan(1)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   fastify.register(function scopeOne (instance, opts, next) {
     instance.register(fastifyMysql, {
@@ -34,15 +33,16 @@ test('Should not throw if registered within different scopes (with and without n
   })
 
   fastify.ready((errors) => {
-    t.error(errors)
+    t.assert.ifError(errors)
+    done()
   })
 })
 
-test('Should throw when trying to register multiple instances without giving a name', (t) => {
+test('Should throw when trying to register multiple instances without giving a name', (t, done) => {
   t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
@@ -53,16 +53,17 @@ test('Should throw when trying to register multiple instances without giving a n
   })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, 'fastify-mysql has already been registered')
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, 'fastify-mysql has already been registered')
+    done()
   })
 })
 
-test('Should throw with duplicate connection names', (t) => {
+test('Should throw with duplicate connection names', (t, done) => {
   t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
   const name = 'test'
 
   fastify
@@ -76,42 +77,44 @@ test('Should throw with duplicate connection names', (t) => {
     })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
+    done()
   })
 })
 
-test('Should throw when mysql2 fail', (t) => {
+test('Should throw when mysql2 fail', (t, done) => {
   t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   const BAD_PORT = 6000
   const HOST = '127.0.0.1'
 
-  // We try to access throught a wrong port (MySQL listen on port 3306)
+  // We try to access through a wrong port (MySQL listen on port 3306)
   fastify.register(fastifyMysql, {
     host: HOST,
     port: BAD_PORT
   })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    done()
   })
 })
 
-test('Promise: Should throw when mysql2 fail', (t) => {
+test('Promise: Should throw when mysql2 fail', (t, done) => {
   t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   const BAD_PORT = 6000
   const HOST = '127.0.0.1'
 
-  // We try to access throught a wrong port (MySQL listen on port 3306)
+  // We try to access through a wrong port (MySQL listen on port 3306)
   fastify.register(fastifyMysql, {
     host: HOST,
     port: BAD_PORT,
@@ -119,21 +122,22 @@ test('Promise: Should throw when mysql2 fail', (t) => {
   })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    done()
   })
 })
 
-test('Connection - Promise: Should throw when mysql2 fail', (t) => {
-  t.plan(3)
+test('Connection - Promise: Should throw when mysql2 fail', (t, done) => {
+  t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   const BAD_PORT = 6000
   const HOST = '127.0.0.1'
 
-  // We try to access throught a wrong port (MySQL listen on port 3306)
+  // We try to access through a wrong port (MySQL listen on port 3306)
   fastify.register(fastifyMysql, {
     host: HOST,
     port: BAD_PORT,
@@ -142,17 +146,17 @@ test('Connection - Promise: Should throw when mysql2 fail', (t) => {
   })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
-    t.pass()
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, `connect ECONNREFUSED ${HOST}:${BAD_PORT}`)
+    done()
   })
 })
 
-test('Promise - Should throw when trying to register multiple instances without giving a name', (t) => {
-  t.plan(3)
+test('Promise - Should throw when trying to register multiple instances without giving a name', (t, done) => {
+  t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
@@ -163,17 +167,17 @@ test('Promise - Should throw when trying to register multiple instances without 
   })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, 'fastify-mysql has already been registered')
-    t.pass()
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, 'fastify-mysql has already been registered')
+    done()
   })
 })
 
-test('Promise - Should throw with duplicate connection names', (t) => {
-  t.plan(3)
+test('Promise - Should throw with duplicate connection names', (t, done) => {
+  t.plan(2)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
   const name = 'test'
 
   fastify
@@ -187,8 +191,8 @@ test('Promise - Should throw with duplicate connection names', (t) => {
     })
 
   fastify.ready((errors) => {
-    t.ok(errors)
-    t.equal(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
-    t.pass()
+    t.assert.ok(errors)
+    t.assert.strictEqual(errors.message, `fastify-mysql '${name}' instance name has already been registered`)
+    done()
   })
 })

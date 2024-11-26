@@ -1,11 +1,11 @@
 'use strict'
 
-const test = require('tap').test
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 const { isMySQLPool, isMySQLPromisePool, isMySQLConnection, isMySQLPromiseConnection } = fastifyMysql
 
-test('fastify.mysql namespace should exist', (t) => {
+test('fastify.mysql namespace should exist', (t, done) => {
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     type: 'connection',
@@ -14,25 +14,25 @@ test('fastify.mysql namespace should exist', (t) => {
     user: 'root',
     database: 'mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready((err) => {
-    t.error(err)
-    t.ok(fastify.mysql)
-    t.ok(fastify.mysql.test)
-    t.ok(fastify.mysql.test.connection)
-    t.ok(fastify.mysql.test.query)
-    t.ok(fastify.mysql.test.execute)
+    t.assert.ifError(err)
+    t.assert.ok(fastify.mysql)
+    t.assert.ok(fastify.mysql.test)
+    t.assert.ok(fastify.mysql.test.connection)
+    t.assert.ok(fastify.mysql.test.query)
+    t.assert.ok(fastify.mysql.test.execute)
 
-    t.ok(fastify.mysql.test.format)
-    t.ok(fastify.mysql.test.escape)
-    t.ok(fastify.mysql.test.escapeId)
+    t.assert.ok(fastify.mysql.test.format)
+    t.assert.ok(fastify.mysql.test.escape)
+    t.assert.ok(fastify.mysql.test.escapeId)
 
-    fastify.close()
-    t.end()
+    done()
   })
 })
 
-test('utils should work', (t) => {
+test('utils should work', async (t) => {
   let fastify = null
   t.beforeEach(() => {
     fastify = Fastify()
@@ -48,70 +48,64 @@ test('utils should work', (t) => {
     fastify = null
   })
 
-  t.test('query util', (t) => {
+  await t.test('query util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.query('SELECT 1 AS `ping`', (err, results) => {
-        t.error(err)
-        t.ok(results[0].ping === 1)
-
-        fastify.close()
-        t.end()
+        t.assert.ifError(err)
+        t.assert.ok(results[0].ping === 1)
+        done()
       })
     })
   })
 
-  t.test('execute util', (t) => {
+  await t.test('execute util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.execute('SELECT ? as `ping`', [1], (err, results) => {
-        t.error(err)
-        t.ok(results[0].ping === 1)
-
-        fastify.close()
-        t.end()
+        t.assert.ifError(err)
+        t.assert.ok(results[0].ping === 1)
+        done()
       })
     })
   })
 
-  t.test('format util', (t) => {
+  await t.test('format util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.equal('SELECT 1 AS `now`', sqlString)
-      t.end()
+      t.assert.strictEqual('SELECT 1 AS `now`', sqlString)
+      done()
     })
   })
 
-  t.test('escape util', (t) => {
+  await t.test('escape util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
-      t.equal(sql, `SELECT * FROM users WHERE id = '${id}'`)
-      t.end()
+      t.assert.strictEqual(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      done()
     })
   })
 
-  t.test('escapeId util', (t) => {
+  await t.test('escapeId util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
-      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
-      t.end()
+      t.assert.strictEqual(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      done()
     })
   })
-
-  t.end()
 })
 
-test('promise connection', (t) => {
+test('promise connection', async (t) => {
   let fastify = null
   t.beforeEach(() => {
     fastify = Fastify()
@@ -127,97 +121,92 @@ test('promise connection', (t) => {
     fastify = null
   })
 
-  t.test('query util', (t) => {
+  await t.test('query util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.query('SELECT 1 AS `ping`').then(([results]) => {
-        t.error(err)
-
-        t.ok(results[0].ping === 1)
-        t.end()
+        t.assert.ok(results[0].ping === 1)
+        done()
       })
     })
   })
 
-  t.test('execute util', (t) => {
+  await t.test('execute util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.execute('SELECT ? AS `ping`', [1]).then(([results]) => {
-        t.error(err)
-
-        t.ok(results[0].ping === 1)
-        t.end()
+        t.assert.ok(results[0].ping === 1)
+        done()
       })
     })
   })
 
-  t.test('format util', (t) => {
+  await t.test('format util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.equal('SELECT 1 AS `now`', sqlString)
-      t.end()
+      t.assert.strictEqual('SELECT 1 AS `now`', sqlString)
+      done()
     })
   })
 
-  t.test('escape util', (t) => {
+  await t.test('escape util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
-      t.equal(sql, `SELECT * FROM users WHERE id = '${id}'`)
-      t.end()
+      t.assert.strictEqual(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      done()
     })
   })
 
-  t.test('escapeId util', (t) => {
+  await t.test('escapeId util', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
-      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
-      t.end()
+      t.assert.strictEqual(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      done()
     })
   })
 
-  t.test('Should throw when mysql2 fail to perform operation', (t) => {
+  await t.test('Should throw when mysql2 fail to perform operation', (t, done) => {
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
-      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
-      t.end()
+      t.assert.strictEqual(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      done()
     })
   })
-
-  t.end()
 })
 
-test('isMySQLConnection is true', (t) => {
+test('isMySQLConnection is true', (t, done) => {
   t.plan(5)
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     type: 'connection',
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
+
   fastify.ready((err) => {
-    t.error(err)
-    t.equal(isMySQLConnection(fastify.mysql), true)
-    t.equal(isMySQLPool(fastify.mysql), false)
-    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
-    t.equal(isMySQLPromisePool(fastify.mysql), false)
-    t.end()
+    t.assert.ifError(err)
+    t.assert.strictEqual(isMySQLConnection(fastify.mysql), true)
+    t.assert.strictEqual(isMySQLPool(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLPromiseConnection(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLPromisePool(fastify.mysql), false)
+    done()
   })
-  fastify.close()
 })
 
-test('isMySQLPromiseConnection is true', (t) => {
+test('isMySQLPromiseConnection is true', (t, done) => {
   t.plan(5)
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
@@ -225,22 +214,23 @@ test('isMySQLPromiseConnection is true', (t) => {
     type: 'connection',
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
+
   fastify.ready((err) => {
-    t.error(err)
-    t.equal(isMySQLPromiseConnection(fastify.mysql), true)
-    t.equal(isMySQLPromisePool(fastify.mysql), false)
-    t.equal(isMySQLConnection(fastify.mysql), false)
-    t.equal(isMySQLPool(fastify.mysql), false)
-    t.end()
+    t.assert.ifError(err)
+    t.assert.strictEqual(isMySQLPromiseConnection(fastify.mysql), true)
+    t.assert.strictEqual(isMySQLPromisePool(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLConnection(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLPool(fastify.mysql), false)
+    done()
   })
-  fastify.close()
 })
 
-test('Promise: should throw when mysql2 fail to perform operation', (t) => {
+test('Promise: should throw when mysql2 fail to perform operation', (t, done) => {
   t.plan(3)
 
   const fastify = Fastify()
-  t.teardown(() => fastify.close())
+  t.after(() => fastify.close())
 
   fastify.register(fastifyMysql, {
     type: 'connection',
@@ -252,13 +242,14 @@ test('Promise: should throw when mysql2 fail to perform operation', (t) => {
   })
 
   fastify.ready((err) => {
-    t.error(err)
+    t.assert.ifError(err)
 
     const sql = 'SELECT fastify FROM fastify'
 
     fastify.mysql.test.connection.query(sql).catch((errors) => {
-      t.ok(errors)
-      t.equal(errors.message, "Table 'mysql.fastify' doesn't exist")
+      t.assert.ok(errors)
+      t.assert.strictEqual(errors.message, "Table 'mysql.fastify' doesn't exist")
+      done()
     })
   })
 })

@@ -1,11 +1,11 @@
 'use strict'
 
-const test = require('tap').test
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 const { isMySQLPromisePool, isMySQLPromiseConnection, isMySQLPool, isMySQLConnection } = fastifyMysql
 
-test('promise pool', (t) => {
+test('promise pool', async (t) => {
   let fastify
 
   t.beforeEach(() => {
@@ -23,81 +23,83 @@ test('promise pool', (t) => {
     fastify.close()
   })
 
-  t.test('mysql.pool.query', (t) => {
+  await t.test('mysql.pool.query', (t, done) => {
     t.plan(3)
 
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.query('SELECT 1 AS `ping`')
         .then(([results, fields]) => {
-          t.ok(results[0].ping === 1)
-          t.ok(fields)
+          t.assert.ok(results[0].ping === 1)
+          t.assert.ok(fields)
+          done()
         })
     })
   })
 
-  t.test('mysql.pool.execute', (t) => {
+  await t.test('mysql.pool.execute', (t, done) => {
     t.plan(3)
 
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.execute('SELECT ? AS `ping`', [1])
         .then(([results, fields]) => {
-          t.ok(results[0].ping === 1)
-          t.ok(fields)
+          t.assert.ok(results[0].ping === 1)
+          t.assert.ok(fields)
+          done()
         })
     })
   })
 
-  t.test('promise pool.getConnection', (t) => {
+  await t.test('promise pool.getConnection', (t, done) => {
     t.plan(7)
 
     fastify.ready((err) => {
-      t.error(err)
+      t.assert.ifError(err)
 
       fastify.mysql.getConnection()
         .then((connection) => {
           connection.query('SELECT 2 AS `ping`')
             .then(([results, fields]) => {
-              t.ok(results[0].ping === 2)
-              t.ok(fields)
+              t.assert.ok(results[0].ping === 2)
+              t.assert.ok(fields)
               connection.release()
             })
         })
 
       fastify.mysql.query('SELECT 3 AS `ping`')
         .then(([results, fields]) => {
-          t.ok(results[0].ping === 3)
-          t.ok(fields)
+          t.assert.ok(results[0].ping === 3)
+          t.assert.ok(fields)
         })
 
       fastify.mysql.execute('SELECT ? AS `ping`', [3])
         .then(([results, fields]) => {
-          t.ok(results[0].ping === 3)
-          t.ok(fields)
+          t.assert.ok(results[0].ping === 3)
+          t.assert.ok(fields)
+          done()
         })
     })
   })
-
-  t.end()
 })
 
-test('isMySQLPromisePool is true', (t) => {
+test('isMySQLPromisePool is true', (t, done) => {
   t.plan(5)
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     promise: true,
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
+
   fastify.ready((err) => {
-    t.error(err)
-    t.equal(isMySQLPromisePool(fastify.mysql), true)
-    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
-    t.equal(isMySQLPool(fastify.mysql), false)
-    t.equal(isMySQLConnection(fastify.mysql), false)
-    t.end()
+    t.assert.ifError(err)
+    t.assert.strictEqual(isMySQLPromisePool(fastify.mysql), true)
+    t.assert.strictEqual(isMySQLPromiseConnection(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLPool(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLConnection(fastify.mysql), false)
+    done()
   })
-  fastify.close()
 })

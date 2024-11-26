@@ -1,10 +1,10 @@
 'use strict'
 
-const test = require('tap').test
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 
-test('callback connection', (t) => {
+test('callback connection', (t, done) => {
   let fastify = null
 
   fastify = Fastify()
@@ -12,23 +12,20 @@ test('callback connection', (t) => {
     type: 'connection',
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready((err) => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.mysql.query('SELECT 1 AS `ping`', (err, results) => {
-      t.error(err)
-      t.ok(results[0].ping === 1)
-
-      fastify.close((closeErr) => {
-        t.error(closeErr)
-        t.end()
-      })
+      t.assert.ifError(err)
+      t.assert.ok(results[0].ping === 1)
+      done()
     })
   })
 })
 
-test('promise connection', (t) => {
+test('promise connection', (t, done) => {
   let fastify = null
 
   fastify = Fastify()
@@ -37,17 +34,14 @@ test('promise connection', (t) => {
     type: 'connection',
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready((err) => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.mysql.query('SELECT 1 AS `ping`').then(([results]) => {
-      t.ok(results[0].ping === 1)
-
-      fastify.close((closeErr) => {
-        t.error(closeErr)
-        t.end()
-      })
+      t.assert.ok(results[0].ping === 1)
+      done()
     })
   })
 })
