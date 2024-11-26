@@ -1,12 +1,11 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fastifyMysql = require('../index')
 const { isMySQLPool, isMySQLPromisePool, isMySQLConnection, isMySQLPromiseConnection } = fastifyMysql
 
-test('fastify.mysql namespace should exist', t => {
+test('fastify.mysql namespace should exist', (t, done) => {
   t.plan(9)
 
   const fastify = Fastify()
@@ -14,23 +13,25 @@ test('fastify.mysql namespace should exist', t => {
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
-    t.ok(fastify.mysql)
-    t.ok(fastify.mysql.pool)
-    t.ok(fastify.mysql.query)
-    t.ok(fastify.mysql.execute)
-    t.ok(fastify.mysql.getConnection)
-    t.ok(fastify.mysql.format)
-    t.ok(fastify.mysql.escape)
-    t.ok(fastify.mysql.escapeId)
-    fastify.close()
+    t.assert.ok(fastify.mysql)
+    t.assert.ok(fastify.mysql.pool)
+    t.assert.ok(fastify.mysql.query)
+    t.assert.ok(fastify.mysql.execute)
+    t.assert.ok(fastify.mysql.getConnection)
+    t.assert.ok(fastify.mysql.format)
+    t.assert.ok(fastify.mysql.escape)
+    t.assert.ok(fastify.mysql.escapeId)
+
+    done()
   })
 })
 
-test('use query util', t => {
+test('use query util', (t, done) => {
   t.plan(3)
 
   const fastify = Fastify()
@@ -38,20 +39,21 @@ test('use query util', t => {
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.mysql.query('SELECT NOW()', (err, result) => {
-      t.error(err)
+      t.assert.ifError(err)
 
-      t.ok(result.length)
-      fastify.close()
+      t.assert.ok(result.length)
+      done()
     })
   })
 })
 
-test('use execute util', t => {
+test('use execute util', (t, done) => {
   t.plan(3)
 
   const fastify = Fastify()
@@ -59,20 +61,21 @@ test('use execute util', t => {
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.mysql.execute('SELECT NOW()', (err, result) => {
-      t.error(err)
+      t.assert.ifError(err)
 
-      t.ok(result.length)
-      fastify.close()
+      t.assert.ok(result.length)
+      done()
     })
   })
 })
 
-test('use getConnection util', t => {
+test('use getConnection util', (t, done) => {
   t.plan(7)
 
   const fastify = Fastify()
@@ -83,32 +86,33 @@ test('use getConnection util', t => {
     database: 'mysql',
     connectionLimit: 1
   })
+  t.after(() => fastify.close())
 
   fastify.ready((err) => {
-    t.error(err)
+    t.assert.ifError(err)
 
     fastify.mysql.getConnection((err, connection) => {
-      t.error(err)
+      t.assert.ifError(err)
 
-      t.ok(connection)
+      t.assert.ok(connection)
       connection.query('SELECT 1 AS `ping`', (err, results) => {
-        t.error(err)
+        t.assert.ifError(err)
 
-        t.ok(results[0].ping === 1)
+        t.assert.ok(results[0].ping === 1)
         connection.release()
       })
     })
     // if not call connection.release(), it will block next query
     fastify.mysql.query('SELECT NOW()', (err, result) => {
-      t.error(err)
+      t.assert.ifError(err)
 
-      t.ok(result.length)
-      fastify.close()
+      t.assert.ok(result.length)
+      done()
     })
   })
 })
 
-test('fastify.mysql.test namespace should exist', t => {
+test('fastify.mysql.test namespace should exist', (t, done) => {
   t.plan(9)
 
   const fastify = Fastify()
@@ -117,23 +121,25 @@ test('fastify.mysql.test namespace should exist', t => {
     name: 'test',
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready(err => {
-    t.error(err)
+    t.assert.ifError(err)
 
-    t.ok(fastify.mysql)
-    t.ok(fastify.mysql.test)
-    t.ok(fastify.mysql.test.pool)
-    t.ok(fastify.mysql.test.execute)
-    t.ok(fastify.mysql.test.getConnection)
-    t.ok(fastify.mysql.test.format)
-    t.ok(fastify.mysql.test.escape)
-    t.ok(fastify.mysql.test.escapeId)
-    fastify.close()
+    t.assert.ok(fastify.mysql)
+    t.assert.ok(fastify.mysql.test)
+    t.assert.ok(fastify.mysql.test.pool)
+    t.assert.ok(fastify.mysql.test.execute)
+    t.assert.ok(fastify.mysql.test.getConnection)
+    t.assert.ok(fastify.mysql.test.format)
+    t.assert.ok(fastify.mysql.test.escape)
+    t.assert.ok(fastify.mysql.test.escapeId)
+
+    done()
   })
 })
 
-test('synchronous functions', (t) => {
+test('synchronous functions', (t, done) => {
   const fastify = Fastify()
 
   fastify.register(fastifyMysql, {
@@ -141,48 +147,49 @@ test('synchronous functions', (t) => {
     user: 'root',
     database: 'mysql'
   })
+  t.after(() => fastify.close())
 
   fastify.ready((err) => {
-    t.error(err)
+    t.assert.ifError(err)
 
-    test('mysql.format', (t) => {
+    test('mysql.format', (t, done) => {
       const sqlString = fastify.mysql.format('SELECT ? AS `now`', [1])
-      t.equal('SELECT 1 AS `now`', sqlString)
-      t.end()
+      t.assert.strictEqual('SELECT 1 AS `now`', sqlString)
+      done()
     })
 
-    test('mysql.escape', (t) => {
+    test('mysql.escape', (t, done) => {
       const id = 'userId'
       const sql = 'SELECT * FROM users WHERE id = ' + fastify.mysql.escape(id)
-      t.equal(sql, `SELECT * FROM users WHERE id = '${id}'`)
-      t.end()
+      t.assert.strictEqual(sql, `SELECT * FROM users WHERE id = '${id}'`)
+      done()
     })
 
-    test('mysql.escapeId', (t) => {
+    test('mysql.escapeId', (t, done) => {
       const sorter = 'date'
       const sql = 'SELECT * FROM posts ORDER BY ' + fastify.mysql.escapeId('posts.' + sorter)
-      t.ok(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
-      t.end()
+      t.assert.strictEqual(sql, 'SELECT * FROM posts ORDER BY `posts`.`date`')
+      done()
     })
 
-    fastify.close()
-    t.end()
+    done()
   })
 })
 
-test('isMySQLPool is true', (t) => {
+test('isMySQLPool is true', (t, done) => {
   t.plan(5)
   const fastify = Fastify()
   fastify.register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql'
   })
+  t.after(() => fastify.close())
+
   fastify.ready((err) => {
-    t.error(err)
-    t.equal(isMySQLPool(fastify.mysql), true)
-    t.equal(isMySQLConnection(fastify.mysql), false)
-    t.equal(isMySQLPromisePool(fastify.mysql), false)
-    t.equal(isMySQLPromiseConnection(fastify.mysql), false)
-    t.end()
+    t.assert.ifError(err)
+    t.assert.strictEqual(isMySQLPool(fastify.mysql), true)
+    t.assert.strictEqual(isMySQLConnection(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLPromisePool(fastify.mysql), false)
+    t.assert.strictEqual(isMySQLPromiseConnection(fastify.mysql), false)
+    done()
   })
-  fastify.close()
 })
