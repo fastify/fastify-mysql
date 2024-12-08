@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/fastify/fastify-mysql/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/fastify/fastify-mysql/actions/workflows/ci.yml)
 [![NPM version](https://img.shields.io/npm/v/@fastify/mysql.svg?style=flat)](https://www.npmjs.com/package/@fastify/mysql)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
+[![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
 Fastify MySQL connection plugin; with this you can share the same MySQL connection pool in every part of your server.
 Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options that you pass to `register` will be passed to the MySQL pool builder.
