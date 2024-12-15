@@ -1,3 +1,4 @@
+/* eslint-disable n/handle-callback-err -- Testing types, not actual code */
 import fastify from 'fastify'
 import fastifyMysql, {
   MySQLConnection,
