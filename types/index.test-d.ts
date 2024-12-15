@@ -1,4 +1,3 @@
-/* eslint-disable n/handle-callback-err -- Testing types, not actual code */
 import fastify from 'fastify'
 import fastifyMysql, {
   MySQLConnection,
@@ -37,7 +36,7 @@ app
   .register(fastifyMysql, {
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(function (err) {
+  .after(function (_err) {
     if (isMySQLPool(app.mysql)) {
       const mysql = app.mysql
       mysql.escapeId('foo')
@@ -45,7 +44,7 @@ app
       mysql.format('baz')
       mysql.query('SELECT NOW()', function () {})
       mysql.execute('SELECT NOW()', function () {})
-      mysql.getConnection(function (err, con) {
+      mysql.getConnection(function (_err, con) {
         con.release()
       })
       mysql.pool.end()
@@ -60,7 +59,7 @@ app
     promise: true,
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromisePool(app.mysql)) {
       const mysql = app.mysql
       mysql.escapeId('foo')
@@ -81,7 +80,7 @@ app
     type: 'connection',
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLConnection(app.mysql)) {
       const mysql = app.mysql
       mysql.escapeId('foo')
@@ -102,7 +101,7 @@ app
     promise: true,
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       mysql.escapeId('foo')
@@ -122,7 +121,7 @@ app
     promise: true,
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       const result = await mysql.connection.query<MySQLRowDataPacket[]>('SELECT NOW()')
@@ -138,7 +137,7 @@ app
     connectionString: 'mysql://root@localhost/mysql',
     multipleStatements: true,
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       const result = await mysql.connection.query<MySQLRowDataPacket[][]>(`
@@ -156,7 +155,7 @@ app
     promise: true,
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       const result = await mysql.connection.query<MySQLResultSetHeader>('SET @1 = 1')
@@ -172,7 +171,7 @@ app
     connectionString: 'mysql://root@localhost/mysql',
     multipleStatements: true,
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       const result = await mysql.connection.query<MySQLResultSetHeader[]>(`
@@ -190,7 +189,7 @@ app
     promise: true,
     connectionString: 'mysql://root@localhost/mysql',
   })
-  .after(async function (err) {
+  .after(async function (_err) {
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       mysql.connection.query<MySQLResultSetHeader>('DROP PROCEDURE IF EXISTS myProcedure')
