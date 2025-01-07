@@ -10,7 +10,7 @@ test('Should not throw if registered within different scopes (with and without n
   const fastify = Fastify()
   t.after(() => fastify.close())
 
-  fastify.register(function scopeOne (instance, opts, next) {
+  fastify.register(function scopeOne (instance, _opts, next) {
     instance.register(fastifyMysql, {
       connectionString: 'mysql://root@localhost/mysql'
     })
@@ -18,7 +18,7 @@ test('Should not throw if registered within different scopes (with and without n
     next()
   })
 
-  fastify.register(function scopeTwo (instance, opts, next) {
+  fastify.register(function scopeTwo (instance, _opts, next) {
     instance.register(fastifyMysql, {
       connectionString: 'mysql://root@localhost/mysql',
       name: 'one'
