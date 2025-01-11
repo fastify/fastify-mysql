@@ -5,7 +5,7 @@
 [![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
 Fastify MySQL connection plugin; with this you can share the same MySQL connection pool in every part of your server.
-Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options that you pass to `register` will be passed to the MySQL pool builder.
+Under the hood the [mysql2](https://github.com/sidorares/node-mysql2) is used. If you don't use the `connectionString` option, the options you pass to `register` will be passed to the MySQL pool builder.
 
 _Important:_ All MySQL2 options will be ignored when using `connectionString`, if you want to pass additional options to MySQL2 use `uri` instead of `connectionString`.
 
@@ -13,6 +13,23 @@ _Important:_ All MySQL2 options will be ignored when using `connectionString`, i
 ```
 npm i @fastify/mysql
 ```
+
+### Compatibility
+| Plugin version | Fastify version |
+| ---------------|-----------------|
+| `^5.x`         | `^5.x`          |
+| `^4.x`         | `^4.x`          |
+| `^2.x`         | `^3.x`          |
+| `^0.x`         | `^2.x`          |
+| `^0.x`         | `^1.x`          |
+
+
+Please note that if a Fastify version is out of support, then so are the corresponding versions of this plugin
+in the table above.
+See [Fastify's LTS policy](https://github.com/fastify/fastify/blob/main/docs/Reference/LTS.md) for more details.
+
+
+
 ## Usage
 Add it to you project with `register` and you are done!
 This plugin will add the `mysql` namespace in your Fastify instance, with the following properties:
