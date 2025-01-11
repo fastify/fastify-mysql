@@ -125,8 +125,7 @@ function isMySQLPromiseConnection (obj) {
 }
 
 module.exports = fp(fastifyMysql, {
-  // DISABLED UNTIL v5 RELEASE:
-  // fastify: '5.x',
+  fastify: '5.x',
   name: '@fastify/mysql'
 })
 module.exports.default = fastifyMysql
