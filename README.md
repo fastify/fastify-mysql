@@ -290,7 +290,7 @@ app
   });
 ```
 
-## Acknowledgements
+## Acknowledgments
 
 This project is kindly sponsored by:
 - [nearForm](https://nearform.com)
