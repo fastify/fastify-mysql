@@ -1,6 +1,6 @@
 # @fastify/mysql
 
-[![CI](https://github.com/fastify/fastify-mysql/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/fastify/fastify-mysql/actions/workflows/ci.yml)
+[![CI](https://github.com/fastify/fastify-mysql/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fastify/fastify-mysql/actions/workflows/ci.yml)
 [![NPM version](https://img.shields.io/npm/v/@fastify/mysql.svg?style=flat)](https://www.npmjs.com/package/@fastify/mysql)
 [![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
@@ -214,7 +214,7 @@ app.get("/", async () => {
 ```
 
 ##### isMySQLPool
-Method to check if fastify decorator, mysql is type of [MySQLPool](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L32)
+Method to check if fastify decorator, mysql is type of [MySQLPool](https://github.com/fastify/fastify-mysql/blob/main/types/index.d.ts#L32)
 
 ```typescript
 const app = fastify();
@@ -235,7 +235,7 @@ app
 
 
 ##### isMySQLPromisePool
-Method to check if fastify decorator, mysql is type of [MySQLPromisePool](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L43)
+Method to check if fastify decorator, mysql is type of [MySQLPromisePool](https://github.com/fastify/fastify-mysql/blob/main/types/index.d.ts#L43)
 
 ```typescript
 app
@@ -255,7 +255,7 @@ app
 
 
 ##### isMySQLConnection
-Method to check if fastify decorator, mysql is type of [MySQLConnection](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L28)
+Method to check if fastify decorator, mysql is type of [MySQLConnection](https://github.com/fastify/fastify-mysql/blob/main/types/index.d.ts#L28)
 
 ```typescript
 app
@@ -273,7 +273,7 @@ app
 
 
 ##### isMySQLPromiseConnection
-Method to check if fastify decorator, mysql is type of [MySQLPromiseConnection](https://github.com/fastify/fastify-mysql/blob/master/types/index.d.ts#L36)
+Method to check if fastify decorator, mysql is type of [MySQLPromiseConnection](https://github.com/fastify/fastify-mysql/blob/main/types/index.d.ts#L36)
 
 ```typescript
 app
