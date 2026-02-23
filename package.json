@@ -9,10 +9,11 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "mariadb": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mariadb:10.1",
-    "mysql": "npm run mysql:8.0",
+    "mysql": "npm run mysql:9.0",
     "mysql:5.7": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.7",
     "mysql:5.5": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:5.5",
     "mysql:8.0": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:8.0",
+    "mysql:9.0": "docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes --rm mysql:9.0",
     "test": "npm run test:unit && npm run test:typescript",
     "test:unit": "c8 --100 node --test",
     "test:typescript": "tsd"

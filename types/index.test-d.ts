@@ -13,7 +13,7 @@ import fastifyMysql, {
   isMySQLPool,
 } from '..'
 import { expectType } from 'tsd'
-import { Pool } from 'mysql2/typings/mysql/lib/Pool'
+import type { Pool } from 'mysql2'
 import { Connection, PoolConnection } from 'mysql2'
 import { Pool as PromisePool, Connection as PromiseConnection, PoolConnection as PromisePoolConnection } from 'mysql2/promise'
 
