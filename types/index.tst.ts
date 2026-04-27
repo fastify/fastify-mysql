@@ -12,7 +12,7 @@ import fastifyMysql, {
   isMySQLPromisePool,
   isMySQLPool,
 } from '..'
-import { expectType } from 'tsd'
+import { expect } from 'tstyche'
 import type { Pool, Connection, PoolConnection } from 'mysql2'
 import { Pool as PromisePool, Connection as PromiseConnection, PoolConnection as PromisePoolConnection } from 'mysql2/promise'
 
@@ -47,9 +47,10 @@ app
         con.release()
       })
       mysql.pool.end()
-      expectType<PoolGetConnectionType>(app.mysql.getConnection)
-      expectType<Pool>(app.mysql.pool)
-      expectType<PoolPromiseType>(app.mysql.pool.promise)
+
+      expect(app.mysql.getConnection).type.toBe<PoolGetConnectionType>()
+      expect(app.mysql.pool).type.toBe<Pool>()
+      expect(app.mysql.pool.promise).type.toBe<PoolPromiseType>()
     }
   })
 
@@ -69,8 +70,9 @@ app
       const con = await mysql.getConnection()
       con.release()
       mysql.pool.end()
-      expectType<() => Promise<PromisePoolConnection>>(app.mysql.getConnection)
-      expectType<PromisePool>(app.mysql.pool)
+
+      expect(app.mysql.getConnection).type.toBe<() => Promise<PromisePoolConnection>>()
+      expect(app.mysql.pool).type.toBe<PromisePool>()
     }
   })
 
@@ -88,9 +90,10 @@ app
       mysql.query('SELECT NOW()', function () {})
       mysql.execute('SELECT NOW()', function () {})
       mysql.connection.end()
-      expectType<Connection>(app.mysql.connection)
-      expectType<ConnectionPromiseType>(app.mysql.connection.promise)
-      expectType<boolean>(app.mysql.connection.authorized)
+
+      expect(app.mysql.connection).type.toBe<Connection>()
+      expect(app.mysql.connection.promise).type.toBe<ConnectionPromiseType>()
+      expect(app.mysql.connection.authorized).type.toBe<boolean>()
     }
   })
 
@@ -109,8 +112,9 @@ app
       await mysql.query('SELECT NOW()')
       await mysql.execute('SELECT NOW()')
       mysql.connection.end()
-      expectType<PromiseConnection>(app.mysql.connection)
-      expectType<number>(app.mysql.connection.threadId)
+
+      expect(app.mysql.connection).type.toBe<PromiseConnection>()
+      expect(app.mysql.connection.threadId).type.toBe<number>()
     }
   })
 
@@ -124,7 +128,8 @@ app
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       const result = await mysql.connection.query<MySQLRowDataPacket[]>('SELECT NOW()')
-      expectType<MySQLRowDataPacket[]>(result[0])
+
+      expect(result[0]).type.toBe<MySQLRowDataPacket[]>()
       mysql.connection.end()
     }
   })
@@ -143,7 +148,8 @@ app
         SELECT 1 + 1 AS test;
         SELECT 2 + 2 AS test;
       `)
-      expectType<MySQLRowDataPacket[][]>(result[0])
+
+      expect(result[0]).type.toBe<MySQLRowDataPacket[][]>()
       mysql.connection.end()
     }
   })
@@ -158,7 +164,8 @@ app
     if (isMySQLPromiseConnection(app.mysql)) {
       const mysql = app.mysql
       const result = await mysql.connection.query<MySQLResultSetHeader>('SET @1 = 1')
-      expectType<MySQLResultSetHeader>(result[0])
+
+      expect(result[0]).type.toBe<MySQLResultSetHeader>()
       mysql.connection.end()
     }
   })
@@ -177,7 +184,7 @@ app
         SET @1 = 1;
         SET @2 = 2;
       `)
-      expectType<MySQLResultSetHeader[]>(result[0])
+      expect(result[0]).type.toBe<MySQLResultSetHeader[]>()
       mysql.connection.end()
     }
   })
@@ -200,7 +207,8 @@ app
         END
       `)
       const result = await mysql.connection.query<MySQLProcedureCallPacket<MySQLResultSetHeader>>('CALL myProcedure()')
-      expectType<MySQLProcedureCallPacket<MySQLResultSetHeader>>(result[0])
+
+      expect(result[0]).type.toBe<MySQLProcedureCallPacket<MySQLResultSetHeader>>()
       mysql.connection.end()
     }
   })
