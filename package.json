@@ -65,7 +65,7 @@
     }
   ],
   "dependencies": {
-    "fastify-plugin": "^5.0.0",
+    "fastify-plugin": "^6.0.0",
     "mysql2": "^3.9.7"
   },
   "devDependencies": {
