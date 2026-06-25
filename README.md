@@ -97,6 +97,46 @@ fastify.listen({ port: 3000 }, err => {
 ```
 As you can see there is no need to close the client, since it is done internally.
 
+### Pool options
+
+By default, this plugin creates a [`mysql2` pool](https://sidorares.github.io/node-mysql2/docs#using-connection-pools). If you do not pass `connectionString`, every MySQL option registered with the plugin is forwarded to `mysql2.createPool()`:
+
+```js
+const fastify = require('fastify')()
+
+fastify.register(require('@fastify/mysql'), {
+  host: 'localhost',
+  user: 'root',
+  database: 'mysql',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+})
+
+fastify.get('/users', (req, reply) => {
+  fastify.mysql.query(
+    'SELECT id, username FROM users',
+    function onResult (err, result) {
+      reply.send(err || result)
+    }
+  )
+})
+```
+
+The same pool options can be used with `promise: true`; in that case the pool is created with `mysql2/promise`:
+
+```js
+fastify.register(require('@fastify/mysql'), {
+  promise: true,
+  host: 'localhost',
+  user: 'root',
+  database: 'mysql',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+})
+```
+
 Async/await is supported, when register `promise` option is `true`:
 ```js
 const fastify = require('fastify')()
