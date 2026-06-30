@@ -294,7 +294,9 @@ app
 
 This project is kindly sponsored by:
 - [nearForm](https://nearform.com)
-- [LetzDoIt](https://www.letzdoitapp.com/)
+
+Past sponsors:
+- LetzDoIt
 
 ## License
 
