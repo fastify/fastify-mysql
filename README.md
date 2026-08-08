@@ -123,6 +123,8 @@ fastify.get('/users', (req, reply) => {
 })
 ```
 
+> **Important**: all `mysql2` pool options are ignored when using `connectionString`. If you need extra options together with a connection string, use `uri` instead of `connectionString`.
+
 The same pool options can be used with `promise: true`; in that case the pool is created with `mysql2/promise`:
 
 ```js
