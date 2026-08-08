@@ -1,6 +1,6 @@
 {
   "name": "@fastify/mysql",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Fastify Mysql connection plugin",
   "main": "index.js",
   "type": "commonjs",
