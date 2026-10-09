@@ -83,6 +83,27 @@ test('Should throw with duplicate connection names', (t, done) => {
   })
 })
 
+test('Should accept names matching inherited object properties', async (t) => {
+  const fastify = Fastify()
+  t.after(() => fastify.close())
+
+  for (const name of ['toString', 'constructor', '__proto__']) {
+    fastify.register(fastifyMysql, {
+      connectionString: 'mysql://root@localhost/mysql',
+      name
+    })
+  }
+
+  await fastify.ready()
+
+  for (const name of ['toString', 'constructor', '__proto__']) {
+    const rows = await new Promise((resolve, reject) => {
+      fastify.mysql[name].query('SELECT 1 AS value', (err, rows) => err ? reject(err) : resolve(rows))
+    })
+    t.assert.strictEqual(rows[0].value, 1)
+  }
+})
+
 test('Should throw when mysql2 fail', (t, done) => {
   t.plan(2)
 

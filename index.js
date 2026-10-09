@@ -25,10 +25,10 @@ function fastifyMysql (fastify, options, next) {
 
     if (name) {
       if (!fastify.mysql) {
-        fastify.decorate('mysql', {})
+        fastify.decorate('mysql', Object.create(null))
       }
 
-      if (fastify.mysql[name]) {
+      if (Object.hasOwn(fastify.mysql, name)) {
         return next(new Error(`fastify-mysql '${name}' instance name has already been registered`))
       }
 
