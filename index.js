@@ -24,15 +24,15 @@ function fastifyMysql (fastify, options, next) {
     }
 
     if (name) {
-      if (!fastify.mysql) {
-        fastify.decorate('mysql', Object.create(null))
+      if (!Object.hasOwn(fastify, 'mysql')) {
+        fastify.decorate('mysql', Object.assign(Object.create(null), fastify.mysql))
       }
 
       if (Object.hasOwn(fastify.mysql, name)) {
         return next(new Error(`fastify-mysql '${name}' instance name has already been registered`))
       }
 
-      fastify.mysql[name] = db
+      Object.defineProperty(fastify.mysql, name, { value: db, enumerable: true, configurable: true, writable: true })
     } else {
       if (fastify.mysql) {
         return next(new Error('fastify-mysql has already been registered'))
