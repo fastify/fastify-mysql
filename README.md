@@ -97,6 +97,13 @@ fastify.listen({ port: 3000 }, err => {
 ```
 As you can see there is no need to close the client, since it is done internally.
 
+### Startup failure and shutdown
+
+Failed database initialization initiates cleanup, including connections that arrive
+after Fastify's plugin startup timeout. `fastify.close()` awaits pending cleanup.
+A promise connection must settle before it can be closed, so shutdown can wait for
+mysql2's configured `connectTimeout`. Startup query errors are forwarded to Fastify.
+
 ### Pool options
 
 By default, this plugin creates a [`mysql2` pool](https://sidorares.github.io/node-mysql2/docs#using-connection-pools). If you do not pass `connectionString`, every MySQL option registered with the plugin is forwarded to `mysql2.createPool()`:

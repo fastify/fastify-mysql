@@ -1,27 +1,38 @@
 'use strict'
 
 const fp = require('fastify-plugin')
+const { format, escape, escapeId } = require('mysql2')
 
 function fastifyMysql (fastify, options, next) {
-  const connectionType = options.type
-  delete options.type
-  const name = options.name
-  delete options.name
-  const usePromise = options.promise
-  delete options.promise
+  const { type, name, promise: usePromise, connectionString, ...connectionOptions } = options
+  const mysql = usePromise ? require('mysql2/promise') : require('mysql2')
+  const config = connectionString || connectionOptions
+  const isConnection = type === 'connection'
+  let cancelled = false
+  let cleanup
+  let clientPromise
 
-  _createConnection({ connectionType, options, usePromise }, (err, db) => {
-    if (err) {
-      return next(err)
+  // Install lifecycle handlers before acquiring a client. Promise connections can
+  // arrive after boot has failed; shutdown must also await and close those clients.
+  fastify.addHook('onClose', () => close())
+  function close () {
+    cancelled = true
+    cleanup ||= clientPromise.then(client => usePromise
+      ? client.end()
+      : new Promise((resolve, reject) => client.end(err => err ? reject(err) : resolve())), () => {})
+    return cleanup
+  }
+
+  function decorateClient (client) {
+    const db = {
+      format,
+      escape,
+      escapeId,
+      [isConnection ? 'connection' : 'pool']: client,
+      query: client.query.bind(client),
+      execute: client.execute.bind(client)
     }
-
-    const client = connectionType !== 'connection' ? db.pool : db.connection
-
-    if (usePromise) {
-      fastify.addHook('onClose', (_fastify, done) => client.end().then(done).catch(done))
-    } else {
-      fastify.addHook('onClose', (_fastify, done) => client.end(done))
-    }
+    if (!isConnection) db.getConnection = client.getConnection.bind(client)
 
     if (name) {
       if (!fastify.mysql) {
@@ -29,75 +40,46 @@ function fastifyMysql (fastify, options, next) {
       }
 
       if (Object.hasOwn(fastify.mysql, name)) {
-        return next(new Error(`fastify-mysql '${name}' instance name has already been registered`))
+        throw new Error(`fastify-mysql '${name}' instance name has already been registered`)
       }
 
       fastify.mysql[name] = db
     } else {
       if (fastify.mysql) {
-        return next(new Error('fastify-mysql has already been registered'))
-      } else {
-        fastify.decorate('mysql', db)
+        throw new Error('fastify-mysql has already been registered')
       }
+      fastify.decorate('mysql', db)
     }
+  }
 
-    next()
+  // A separate initialization step lets after() observe its timeout without
+  // calling ready() during registration, which would stall await register().
+  fastify.register(fp(function initializeMySQL (_fastify, _options, done) {
+    clientPromise = Promise.resolve().then(() => isConnection
+      ? mysql.createConnection(config)
+      : mysql.createPool(config))
+
+    clientPromise.then(async client => {
+      if (usePromise) {
+        await client.query('SELECT NOW()')
+      } else {
+        await new Promise((resolve, reject) => client.query('SELECT NOW()', err => err ? reject(err) : resolve()))
+      }
+      if (cancelled) return
+
+      decorateClient(client)
+      done()
+    }).catch(async err => {
+      const notify = !cancelled
+      await close().catch(() => {})
+      if (notify) done(err)
+    })
+  }))
+  fastify.after((err, done) => {
+    if (err) close().catch(() => {})
+    done(err)
   })
-}
-
-function _createConnection ({ connectionType, options, usePromise }, cb) {
-  const { format, escape, escapeId } = require('mysql2')
-  const mysql = usePromise ? require('mysql2/promise') : require('mysql2')
-
-  const db = {
-    format,
-    escape,
-    escapeId
-  }
-
-  let client = {}
-
-  if (connectionType !== 'connection') {
-    // Pool relative code
-    client = mysql.createPool(options.connectionString || options)
-
-    db.pool = client
-    db.query = client.query.bind(client)
-    db.execute = client.execute.bind(client)
-    db.getConnection = client.getConnection.bind(client)
-
-    if (!usePromise) {
-      client.query('SELECT NOW()', (err) => cb(err, db))
-    } else {
-      client
-        .query('SELECT NOW()')
-        .then(() => cb(null, db))
-        .catch((err) => cb(err, null))
-    }
-  } else {
-    // Connection relative code
-    client = mysql.createConnection(options.connectionString || options)
-
-    if (!usePromise) {
-      db.connection = client
-      db.query = client.query.bind(client)
-      db.execute = client.execute.bind(client)
-
-      client.query('SELECT NOW()', (err) => cb(err, db))
-    } else {
-      client
-        .then((connection) => {
-          db.connection = connection
-          db.query = connection.query.bind(connection)
-          db.execute = connection.execute.bind(connection)
-
-          connection
-            .query('SELECT NOW()')
-            .then(() => cb(null, db))
-        })
-        .catch((err) => cb(err, null))
-    }
-  }
+  next()
 }
 
 function isMySQLPoolOrPromisePool (obj) {
