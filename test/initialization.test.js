@@ -217,3 +217,127 @@ test('Promise - Should throw with duplicate connection names', (t, done) => {
     done()
   })
 })
+
+const connectionString = 'mysql://root@localhost/mysql'
+
+for (const unnamed of [false, true]) {
+  const parentKind = unnamed ? 'an unnamed' : 'a named'
+
+  test(`named clients stay in their scope with ${parentKind} parent client`, async (t) => {
+    const app = Fastify()
+    t.after(() => app.close())
+
+    app.register(fastifyMysql, {
+      connectionString,
+      promise: true,
+      ...(unnamed ? {} : { name: 'parent' })
+    })
+
+    let first
+    let second
+    let descendant
+
+    app.register(async (scope) => {
+      first = scope
+      scope.register(fastifyMysql, { connectionString, promise: true, name: 'local' })
+
+      scope.register(async (child) => {
+        descendant = child
+        child.register(fastifyMysql, { connectionString, promise: true, name: 'nested' })
+      })
+    })
+
+    app.register(async (scope) => {
+      second = scope
+      scope.register(fastifyMysql, { connectionString, promise: true, name: 'local' })
+    })
+
+    await app.ready()
+
+    // names added in a child never leak to the parent or to siblings
+    t.assert.strictEqual(app.mysql.local, undefined)
+    t.assert.strictEqual(first.mysql.nested, undefined)
+    t.assert.strictEqual(second.mysql.nested, undefined)
+    t.assert.notStrictEqual(first.mysql.local, second.mysql.local)
+
+    // names added in a parent are still visible to descendants
+    t.assert.strictEqual(descendant.mysql.local, first.mysql.local)
+    t.assert.strictEqual(Object.getPrototypeOf(first.mysql), null)
+
+    const inherited = unnamed ? first.mysql : first.mysql.parent
+    const original = unnamed ? app.mysql : app.mysql.parent
+
+    t.assert.ok(fastifyMysql.isMySQLPromisePool(inherited))
+    t.assert.strictEqual(inherited.pool, original.pool)
+
+    const [rows] = await inherited.query('SELECT 42 AS value')
+
+    t.assert.strictEqual(rows[0].value, 42)
+
+    // the inherited pool is closed exactly once
+    const end = original.pool.end.bind(original.pool)
+    let closes = 0
+
+    t.mock.method(original.pool, 'end', () => {
+      closes++
+      return end()
+    })
+
+    await app.close()
+
+    t.assert.strictEqual(closes, 1)
+  })
+
+  for (const name of ['__proto__', 'constructor', 'toString']) {
+    const where = unnamed ? 'after an unnamed client' : 'in a named registry'
+
+    test(`${name} is safe and rejects duplicates ${where}`, async (t) => {
+      const app = Fastify()
+      t.after(() => app.close())
+
+      let prototype
+
+      if (unnamed) {
+        app.register(fastifyMysql, { connectionString, promise: true })
+      }
+      app.register(fastifyMysql, { connectionString, promise: true, name })
+
+      app.after(() => {
+        prototype = Object.getPrototypeOf(app.mysql)
+
+        t.assert.strictEqual(prototype, unnamed ? Object.prototype : null)
+        t.assert.ok(Object.hasOwn(app.mysql, name))
+        t.assert.ok(fastifyMysql.isMySQLPromisePool(app.mysql[name]))
+      })
+
+      app.register(fastifyMysql, { connectionString, promise: true, name })
+
+      await t.assert.rejects(app.ready(), new RegExp(`'${name}' instance name has already been registered`))
+      t.assert.strictEqual(Object.getPrototypeOf(app.mysql), prototype)
+    })
+  }
+}
+
+test('a child cannot replace an inherited named client', async (t) => {
+  const app = Fastify()
+  t.after(() => app.close())
+
+  app.register(fastifyMysql, { connectionString, promise: true, name: 'parent' })
+  app.register(async (scope) => {
+    scope.register(fastifyMysql, { connectionString, promise: true, name: 'parent' })
+  })
+
+  await t.assert.rejects(app.ready(), /'parent' instance name has already been registered/)
+})
+
+for (const name of ['query', 'pool', 'format']) {
+  test(`a named client cannot replace the default client's ${name}`, async (t) => {
+    const app = Fastify()
+    t.after(() => app.close())
+
+    app.register(fastifyMysql, { connectionString, promise: true })
+    app.register(fastifyMysql, { connectionString, promise: true, name })
+
+    await t.assert.rejects(app.ready(), new RegExp(`'${name}' instance name has already been registered`))
+  })
+}

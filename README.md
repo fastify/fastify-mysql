@@ -163,6 +163,18 @@ fastify.listen({ port: 3000 }, err => {
 })
 ```
 
+### Named instance scopes
+
+Named clients are inherited by descendant Fastify scopes. Adding a name in a child
+scope creates a local registry containing the inherited clients; it does not add
+that name to the parent or siblings. Independent siblings can reuse a name, but a
+child cannot replace an inherited name.
+
+An unnamed client can be registered first, followed by named clients. Names must not
+collide with existing client properties such as `query`, `pool`, or `format`.
+`__proto__`, `constructor`, and `toString` are supported and checked for duplicates,
+including after an unnamed registration.
+
 ## TypeScript
 As `mysql2` expose four different type of client, we do not specify the typing for you. You need to specify the type yourself following the example below.
 ```ts
