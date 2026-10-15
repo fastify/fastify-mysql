@@ -25,6 +25,8 @@ function fastifyMysql (fastify, options, next) {
 
     if (name) {
       if (!Object.hasOwn(fastify, 'mysql')) {
+        // `fastify.mysql` may be inherited from a parent scope: copy it into a
+        // local registry so named clients added here never leak to the parent.
         fastify.decorate('mysql', Object.assign(Object.create(null), fastify.mysql))
       }
 
